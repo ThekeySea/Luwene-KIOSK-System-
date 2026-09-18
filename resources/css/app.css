@@ -1,0 +1,63 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+
+@theme {
+    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+        'Segoe UI Symbol', 'Noto Color Emoji';
+
+    /* Primary - Deep Maroon Red */
+    --color-primary: #8A0000;
+    --color-primary-50: #FEF2F2;
+    --color-primary-100: #FDDADA;
+    --color-primary-200: #FBB5B5;
+    --color-primary-300: #F78080;
+    --color-primary-400: #F04848;
+    --color-primary-500: #E02020;
+    --color-primary-600: #C41212;
+    --color-primary-700: #A30E0E;
+    --color-primary-800: #8A0000;
+    --color-primary-900: #6B0000;
+    --color-primary-950: #3D0000;
+
+    /* Accent - Warm Coral */
+    --color-accent: #F56A47;
+    --color-accent-50: #FFF5F1;
+    --color-accent-100: #FFE8DE;
+    --color-accent-200: #FFD0BB;
+    --color-accent-300: #FFAE8A;
+    --color-accent-400: #F56A47;
+    --color-accent-500: #E84D28;
+    --color-accent-600: #D43515;
+    --color-accent-700: #B2270E;
+    --color-accent-800: #8F2212;
+    --color-accent-900: #772114;
+
+    /* Dark - Deep Brown */
+    --color-dark: #60241E;
+    --color-dark-50: #F8F5F4;
+    --color-dark-100: #F0E8E6;
+    --color-dark-200: #E0CFC9;
+    --color-dark-300: #CCACA3;
+    --color-dark-400: #B28478;
+    --color-dark-500: #9A6658;
+    --color-dark-600: #85524A;
+    --color-dark-700: #6E433E;
+    --color-dark-800: #60241E;
+    --color-dark-900: #4A1D18;
+    --color-dark-950: #2D0F0B;
+
+    /* Warm Neutrals */
+    --color-warm-50: #FDFCFA;
+    --color-warm-100: #F9F6F3;
+    --color-warm-200: #F0EBE5;
+    --color-warm-300: #E4DCD3;
+    --color-warm-400: #C9BBA9;
+    --color-warm-500: #B0A08E;
+    --color-warm-600: #968472;
+    --color-warm-700: #7A6B5D;
+    --color-warm-800: #64584E;
+    --color-warm-900: #534A42;
+    --color-warm-950: #2C2622;
+}
