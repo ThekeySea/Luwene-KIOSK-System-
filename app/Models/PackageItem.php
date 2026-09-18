@@ -2,34 +2,29 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Traits\HasUuids;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Str;
 
 class PackageItem extends Model
 {
-    use HasFactory;
+    use HasUuids;
 
-    protected $keyType = 'string';
-    public $incrementing = false;
-    protected $guarded = [];
+    protected $fillable = ['package_id', 'product_id', 'quantity', 'role', 'is_required', 'sort_order'];
 
-    protected static function booted(): void
+    protected function casts(): array
     {
-        static::creating(function (PackageItem $model) {
-            if (empty($model->id)) {
-                $model->id = (string) Str::uuid();
-            }
-        });
+        return [
+            'quantity' => 'integer',
+            'is_required' => 'boolean',
+        ];
     }
 
-    public function package(): BelongsTo
+    public function package()
     {
         return $this->belongsTo(Package::class);
     }
 
-    public function product(): BelongsTo
+    public function product()
     {
         return $this->belongsTo(Product::class);
     }

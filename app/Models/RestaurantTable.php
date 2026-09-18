@@ -2,47 +2,27 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Traits\HasUuids;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Str;
 
 class RestaurantTable extends Model
 {
-    use HasFactory;
+    use HasUuids;
 
-    protected $table = 'restaurant_tables';
-    protected $keyType = 'string';
-    public $incrementing = false;
-    protected $guarded = [];
+    protected $fillable = ['branch_id', 'table_number', 'capacity', 'status'];
 
-    protected static function booted(): void
-    {
-        static::creating(function (RestaurantTable $model) {
-            if (empty($model->id)) {
-                $model->id = (string) Str::uuid();
-            }
-        });
-    }
-
-    public function branch(): BelongsTo
+    public function branch()
     {
         return $this->belongsTo(Branch::class);
     }
 
-    public function diningSessions(): HasMany
+    public function orders()
+    {
+        return $this->hasMany(Order::class, 'table_id');
+    }
+
+    public function diningSessions()
     {
         return $this->hasMany(DiningSession::class, 'table_id');
-    }
-
-    public function isAvailable(): bool
-    {
-        return $this->status === 'AVAILABLE';
-    }
-
-    public function isOccupied(): bool
-    {
-        return $this->status === 'OCCUPIED';
     }
 }

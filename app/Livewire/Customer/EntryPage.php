@@ -2,117 +2,62 @@
 
 namespace App\Livewire\Customer;
 
-use App\Models\Branch;
-use App\Models\DiningSession;
 use App\Models\RestaurantTable;
+use App\Models\DiningSession;
+use Illuminate\Support\Str;
 use Livewire\Component;
 
 class EntryPage extends Component
 {
-    public ?string $selectedMode = null;
-    public ?string $qrToken = null;
-    public ?string $scannedTableId = null;
-    public ?string $scannedTableName = null;
-    public string $manualTableNumber = '';
-    public ?string $error = null;
+    public string $orderMode = '';
 
-    public function mount(): void
+    public function selectDineIn()
     {
-        if (session('order_mode')) {
-            $this->redirectRoute('customer.menu');
-            return;
-        }
-
-        $this->qrToken = request()->query('qr');
-        if ($this->qrToken) {
-            $this->resolveQrToken();
-        }
+        $this->orderMode = 'DINE_IN';
     }
 
-    public function resolveQrToken(): void
+    public function selectTakeAway()
     {
-        $branch = Branch::where('status', 'ACTIVE')->first();
-        if (!$branch) {
-            $this->error = 'Tidak ada restoran aktif.';
-            return;
-        }
+        session()->put('order_mode', 'TAKE_AWAY');
+        session()->put('table_id', null);
+        session()->put('dining_session_id', null);
 
-        $table = RestaurantTable::where('branch_id', $branch->id)
-            ->where('qr_token_hash', $this->qrToken)
-            ->first();
-
-        if (!$table) {
-            $this->error = 'QR Code tidak valid.';
-            return;
-        }
-
-        if ($table->status === 'INACTIVE') {
-            $this->error = 'Meja tidak aktif.';
-            return;
-        }
-
-        $this->scannedTableId = $table->id;
-        $this->scannedTableName = $table->table_number;
-        $this->selectedMode = 'DINE_IN';
+        return redirect()->route('customer.menu');
     }
 
-    public function selectDineIn(): void
+    public function selectTable(string $tableId)
     {
-        $this->selectedMode = 'DINE_IN';
-    }
+        $table = RestaurantTable::findOrFail($tableId);
 
-    public function selectTakeAway(): void
-    {
-        $this->selectedMode = 'TAKE_AWAY';
-    }
-
-    public function confirmDineIn(): void
-    {
-        if (!$this->scannedTableId) {
-            $this->error = 'Silakan scan QR meja terlebih dahulu.';
+        if ($table->status !== 'AVAILABLE') {
+            session()->flash('error', 'Meja ini sudah terisi.');
             return;
         }
 
-        $branch = Branch::where('status', 'ACTIVE')->first();
-        $table = RestaurantTable::find($this->scannedTableId);
-
-        $session = DiningSession::where('table_id', $table->id)
-            ->where('status', 'OPEN')
-            ->first();
-
-        if (!$session) {
-            $session = DiningSession::create([
-                'branch_id' => $branch->id,
-                'table_id' => $table->id,
-                'opened_at' => now(),
-                'status' => 'OPEN',
-            ]);
-        }
-
-        session([
-            'order_mode' => 'DINE_IN',
+        $session = DiningSession::create([
+            'branch_id' => $table->branch_id,
             'table_id' => $table->id,
-            'table_name' => $table->table_number,
-            'dining_session_id' => $session->id,
+            'order_mode' => 'DINE_IN',
+            'session_token' => Str::uuid()->toString(),
+            'status' => 'OPEN',
         ]);
 
-        $this->redirectRoute('customer.menu');
-    }
+        $table->update(['status' => 'OCCUPIED']);
 
-    public function confirmTakeAway(): void
-    {
-        session([
-            'order_mode' => 'TAKE_AWAY',
-            'table_id' => null,
-            'table_name' => null,
-            'dining_session_id' => null,
-        ]);
+        session()->put('order_mode', 'DINE_IN');
+        session()->put('table_id', $table->id);
+        session()->put('table_number', $table->table_number);
+        session()->put('dining_session_id', $session->id);
 
-        $this->redirectRoute('customer.menu');
+        return redirect()->route('customer.menu');
     }
 
     public function render()
     {
-        return view('livewire.customer.entry-page')->layout('layouts.customer');
+        $tables = RestaurantTable::orderBy('table_number')->get();
+
+        return view('livewire.customer.entry-page', [
+            'tables' => $tables,
+        ])->layout('components.layouts.customer');
     }
 }

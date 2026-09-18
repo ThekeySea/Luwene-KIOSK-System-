@@ -10,17 +10,14 @@ class SpiceLevelSeeder extends Seeder
     public function run(): void
     {
         $levels = [
-            ['level_number' => 0, 'name' => 'Aman', 'description' => 'Tidak pedas, cocok untuk semua kalangan'],
-            ['level_number' => 1, 'name' => 'Nyolek', 'description' => 'Sedikit pedas, mulai terasa di ujung lidah'],
-            ['level_number' => 2, 'name' => 'Nampol', 'description' => 'Pedas yang terasa di mulut dan bibir'],
-            ['level_number' => 3, 'name' => 'Dahsyat', 'description' => 'Pedas ekstrem, untuk pecinta tantangan'],
+            ['name' => 'Original', 'level' => 0, 'sort_order' => 0],
+            ['name' => 'Nyolek', 'level' => 1, 'sort_order' => 1],
+            ['name' => 'Nampol', 'level' => 2, 'sort_order' => 2],
+            ['name' => 'Mampus', 'level' => 3, 'sort_order' => 3],
         ];
 
         foreach ($levels as $level) {
-            SpiceLevel::firstOrCreate(
-                ['level_number' => $level['level_number']],
-                $level
-            );
+            SpiceLevel::create($level);
         }
     }
 }

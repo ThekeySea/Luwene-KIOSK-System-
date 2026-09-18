@@ -2,24 +2,20 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Traits\HasUuids;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
 
 class SpiceLevel extends Model
 {
-    use HasFactory;
+    use HasUuids;
 
-    protected $keyType = 'string';
-    public $incrementing = false;
-    protected $guarded = [];
+    protected $fillable = ['name', 'level', 'description', 'sort_order', 'is_active'];
 
-    protected static function booted(): void
+    protected function casts(): array
     {
-        static::creating(function (SpiceLevel $model) {
-            if (empty($model->id)) {
-                $model->id = (string) Str::uuid();
-            }
-        });
+        return [
+            'level' => 'integer',
+            'is_active' => 'boolean',
+        ];
     }
 }

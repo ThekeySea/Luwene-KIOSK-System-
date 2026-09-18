@@ -9,14 +9,10 @@ class BranchSeeder extends Seeder
 {
     public function run(): void
     {
-        Branch::firstOrCreate(
-            ['code' => 'MAIN'],
-            [
-                'name' => 'LUWENE Main',
-                'address' => 'Jl. Utama No. 1, Jakarta',
-                'timezone' => 'Asia/Jakarta',
-                'status' => 'ACTIVE',
-            ]
-        );
+        Branch::create([
+            'name' => 'LUWENE Main',
+            'address' => 'Jl. Contoh No. 123, Jakarta Selatan',
+            'status' => 'ACTIVE',
+        ]);
     }
 }

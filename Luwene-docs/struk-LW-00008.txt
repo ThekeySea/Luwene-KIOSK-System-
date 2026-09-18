@@ -1,0 +1,23 @@
+================================
+             LUWENE             
+          LUWENE Main           
+Jl. Contoh No. 123, Jakarta Sela
+--------------------------------
+No. Pesanan            #LW-00008
+Tanggal         18-09-2026 09:44
+Pelanggan          rusdi jomoker
+Tipe                 Bawa Pulang
+--------------------------------
+1x Kentang Goreng
+                       Rp 10.000
+--------------------------------
+Subtotal               Rp 10.000
+PPN (11%)               Rp 1.100
+TOTAL                  Rp 11.100
+--------------------------------
+Metode                      QRIS
+Status                     LUNAS
+--------------------------------
+         Terima kasih!          
+  Tunjukkan nomor ini ke kasir  
+================================

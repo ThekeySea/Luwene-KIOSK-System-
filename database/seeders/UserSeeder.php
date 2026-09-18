@@ -11,46 +11,29 @@ class UserSeeder extends Seeder
 {
     public function run(): void
     {
-        $branch = Branch::firstOrCreate(
-            ['code' => 'MAIN'],
-            [
-                'name' => 'LUWENE Main',
-                'address' => 'Jl. Utama No. 1, Jakarta',
-                'timezone' => 'Asia/Jakarta',
-                'status' => 'ACTIVE',
-            ]
-        );
+        $branch = Branch::first();
 
-        User::firstOrCreate(
-            ['email' => 'admin@luwene.id'],
-            [
-                'name' => 'Admin LUWENE',
-                'password' => Hash::make('password'),
-                'role' => 'ADMIN',
-                'status' => 'ACTIVE',
-                'branch_id' => $branch->id,
-            ]
-        );
+        User::create([
+            'name' => 'Admin',
+            'email' => 'admin@luwene.id',
+            'password' => Hash::make('password'),
+            'role' => 'ADMIN',
+            'branch_id' => $branch->id,
+        ]);
 
-        User::firstOrCreate(
-            ['email' => 'kasir@luwene.id'],
-            [
-                'name' => 'Kasir LUWENE',
-                'password' => Hash::make('password'),
-                'role' => 'CASHIER',
-                'status' => 'ACTIVE',
-                'branch_id' => $branch->id,
-            ]
-        );
+        User::create([
+            'name' => 'Kasir',
+            'email' => 'kasir@luwene.id',
+            'password' => Hash::make('password'),
+            'role' => 'CASHIER',
+            'branch_id' => $branch->id,
+        ]);
 
-        User::firstOrCreate(
-            ['email' => 'customer@luwene.id'],
-            [
-                'name' => 'Customer Demo',
-                'password' => Hash::make('password'),
-                'role' => 'CUSTOMER',
-                'status' => 'ACTIVE',
-            ]
-        );
+        User::create([
+            'name' => 'Customer',
+            'email' => 'customer@luwene.id',
+            'password' => Hash::make('password'),
+            'role' => 'CUSTOMER',
+        ]);
     }
 }

@@ -13,18 +13,16 @@ return new class extends Migration
             $table->uuid('order_id');
             $table->uuid('product_id');
             $table->uuid('product_variant_id')->nullable();
-            $table->string('product_name_snapshot');
-            $table->string('variant_name_snapshot')->nullable();
-            $table->decimal('unit_price', 12, 2);
+            $table->string('product_name');
+            $table->string('variant_name')->nullable();
             $table->integer('quantity')->default(1);
-            $table->decimal('subtotal', 14, 2);
-            $table->text('notes')->nullable();
+            $table->decimal('unit_price', 12, 2);
+            $table->decimal('subtotal', 12, 2);
             $table->timestamps();
 
             $table->index('order_id');
-            $table->index('product_id');
             $table->foreign('order_id')->references('id')->on('orders')->cascadeOnDelete();
-            $table->foreign('product_id')->references('id')->on('products')->cascadeOnDelete();
+            $table->foreign('product_id')->references('id')->on('products')->restrictOnDelete();
             $table->foreign('product_variant_id')->references('id')->on('product_variants')->nullOnDelete();
         });
     }

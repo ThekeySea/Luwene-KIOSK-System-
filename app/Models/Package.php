@@ -2,30 +2,25 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Traits\HasUuids;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Str;
 
 class Package extends Model
 {
-    use HasFactory;
+    use HasUuids;
 
-    protected $keyType = 'string';
-    public $incrementing = false;
-    protected $guarded = [];
+    protected $fillable = ['name', 'code', 'description', 'price', 'image', 'is_active'];
 
-    protected static function booted(): void
+    protected function casts(): array
     {
-        static::creating(function (Package $model) {
-            if (empty($model->id)) {
-                $model->id = (string) Str::uuid();
-            }
-        });
+        return [
+            'price' => 'decimal:2',
+            'is_active' => 'boolean',
+        ];
     }
 
-    public function items(): HasMany
+    public function items()
     {
-        return $this->hasMany(PackageItem::class);
+        return $this->hasMany(PackageItem::class)->orderBy('sort_order');
     }
 }

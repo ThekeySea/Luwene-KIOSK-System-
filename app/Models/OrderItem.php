@@ -2,45 +2,43 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Traits\HasUuids;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Str;
 
 class OrderItem extends Model
 {
-    use HasFactory;
+    use HasUuids;
 
-    protected $keyType = 'string';
-    public $incrementing = false;
-    protected $guarded = [];
+    protected $fillable = [
+        'order_id', 'product_id', 'product_variant_id',
+        'product_name', 'variant_name', 'quantity', 'unit_price', 'subtotal',
+    ];
 
-    protected static function booted(): void
+    protected function casts(): array
     {
-        static::creating(function (OrderItem $model) {
-            if (empty($model->id)) {
-                $model->id = (string) Str::uuid();
-            }
-        });
+        return [
+            'quantity' => 'integer',
+            'unit_price' => 'decimal:2',
+            'subtotal' => 'decimal:2',
+        ];
     }
 
-    public function order(): BelongsTo
+    public function order()
     {
         return $this->belongsTo(Order::class);
     }
 
-    public function product(): BelongsTo
+    public function product()
     {
         return $this->belongsTo(Product::class);
     }
 
-    public function productVariant(): BelongsTo
+    public function variant()
     {
-        return $this->belongsTo(ProductVariant::class);
+        return $this->belongsTo(ProductVariant::class, 'product_variant_id');
     }
 
-    public function modifiers(): HasMany
+    public function modifiers()
     {
         return $this->hasMany(OrderItemModifier::class);
     }

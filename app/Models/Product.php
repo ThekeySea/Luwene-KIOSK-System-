@@ -2,52 +2,58 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Traits\HasUuids;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Str;
 
 class Product extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasUuids, SoftDeletes;
 
-    protected $keyType = 'string';
-    public $incrementing = false;
-    protected $guarded = [];
+    protected $fillable = [
+        'category_id', 'name', 'slug', 'description', 'image',
+        'base_price', 'is_active', 'is_available', 'is_featured', 'sort_order',
+    ];
+
+    protected function casts(): array
+    {
+        return [
+            'base_price' => 'decimal:2',
+            'is_active' => 'boolean',
+            'is_available' => 'boolean',
+            'is_featured' => 'boolean',
+        ];
+    }
 
     protected static function booted(): void
     {
-        static::creating(function (Product $model) {
-            if (empty($model->id)) {
-                $model->id = (string) Str::uuid();
+        static::creating(function (Product $product) {
+            if (empty($product->slug)) {
+                $product->slug = Str::slug($product->name);
             }
         });
     }
 
-    public function category(): BelongsTo
+    public function category()
     {
         return $this->belongsTo(Category::class);
     }
 
-    public function variants(): HasMany
+    public function variants()
     {
-        return $this->hasMany(ProductVariant::class);
+        return $this->hasMany(ProductVariant::class)->orderBy('sort_order');
     }
 
-    public function modifierGroups(): HasMany
+    public function modifierGroups()
     {
-        return $this->hasMany(ProductModifierGroup::class);
+        return $this->belongsToMany(ModifierGroup::class, 'product_modifier_groups')
+            ->withPivot('is_required', 'min_selection', 'max_selection', 'sort_order')
+            ->withPivot('id as pivot_id')
+            ->orderByPivot('sort_order');
     }
 
-    public function isActive(): bool
+    public function packageItems()
     {
-        return $this->is_active && !$this->trashed();
-    }
-
-    public function isAvailable(): bool
-    {
-        return $this->is_available && $this->isActive();
+        return $this->hasMany(PackageItem::class);
     }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
 use Symfony\Component\HttpFoundation\Response;
 
 class EnsureRestaurantContext
@@ -12,14 +13,8 @@ class EnsureRestaurantContext
     {
         $user = $request->user();
 
-        if ($user && $user->branch_id === null && !in_array($user->role, ['CUSTOMER'])) {
-            return response()->json([
-                'success' => false,
-                'error' => [
-                    'code' => 'NO_RESTAURANT_CONTEXT',
-                    'message' => 'Tidak ada konteks restoran yang terhubung.',
-                ],
-            ], 400);
+        if ($user && $user->branch_id && ! Session::get('active_branch_id')) {
+            Session::put('active_branch_id', $user->branch_id);
         }
 
         return $next($request);

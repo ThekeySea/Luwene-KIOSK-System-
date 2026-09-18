@@ -2,46 +2,29 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Traits\HasUuids;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Str;
 
 class OrderItemModifier extends Model
 {
-    use HasFactory;
+    use HasUuids;
 
-    protected $table = 'order_item_modifiers';
-    protected $keyType = 'string';
-    public $incrementing = false;
-    protected $guarded = [];
+    protected $fillable = ['order_item_id', 'modifier_id', 'modifier_name', 'modifier_type', 'price'];
 
-    protected static function booted(): void
+    protected function casts(): array
     {
-        static::creating(function (OrderItemModifier $model) {
-            if (empty($model->id)) {
-                $model->id = (string) Str::uuid();
-            }
-        });
+        return [
+            'price' => 'decimal:2',
+        ];
     }
 
-    public function orderItem(): BelongsTo
+    public function orderItem()
     {
         return $this->belongsTo(OrderItem::class);
     }
 
-    public function modifier(): BelongsTo
+    public function modifier()
     {
         return $this->belongsTo(Modifier::class);
-    }
-
-    public function sambal(): BelongsTo
-    {
-        return $this->belongsTo(Sambal::class);
-    }
-
-    public function spiceLevel(): BelongsTo
-    {
-        return $this->belongsTo(SpiceLevel::class);
     }
 }

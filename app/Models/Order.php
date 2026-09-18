@@ -2,87 +2,71 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Traits\HasUuids;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Support\Str;
 
 class Order extends Model
 {
-    use HasFactory;
+    use HasUuids;
 
-    protected $keyType = 'string';
-    public $incrementing = false;
-    protected $guarded = [];
+    protected $fillable = [
+        'branch_id', 'user_id', 'customer_name', 'customer_email', 'customer_phone',
+        'table_id', 'dining_session_id',
+        'client_order_id', 'order_number', 'order_mode', 'status', 'payment_status',
+        'subtotal', 'tax_amount', 'discount_amount', 'total_amount',
+        'notes', 'cancelled_at', 'completed_at',
+    ];
 
-    protected static function booted(): void
+    protected function casts(): array
     {
-        static::creating(function (Order $model) {
-            if (empty($model->id)) {
-                $model->id = (string) Str::uuid();
-            }
-        });
+        return [
+            'subtotal' => 'decimal:2',
+            'tax_amount' => 'decimal:2',
+            'discount_amount' => 'decimal:2',
+            'total_amount' => 'decimal:2',
+            'cancelled_at' => 'datetime',
+            'completed_at' => 'datetime',
+        ];
     }
 
-    public function branch(): BelongsTo
+    public function branch()
     {
         return $this->belongsTo(Branch::class);
     }
 
-    public function customer(): BelongsTo
+    public function user()
     {
-        return $this->belongsTo(User::class, 'customer_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function table(): BelongsTo
+    public function table()
     {
         return $this->belongsTo(RestaurantTable::class, 'table_id');
     }
 
-    public function diningSession(): BelongsTo
+    public function diningSession()
     {
-        return $this->belongsTo(DiningSession::class, 'dining_session_id');
+        return $this->belongsTo(DiningSession::class);
     }
 
-    public function items(): HasMany
+    public function items()
     {
         return $this->hasMany(OrderItem::class);
     }
 
-    public function payment(): HasOne
+    public function payment()
     {
         return $this->hasOne(Payment::class);
     }
 
-    public function isDineIn(): bool
+    public function canTransitionTo(string $newStatus): bool
     {
-        return $this->order_mode === 'DINE_IN';
-    }
-
-    public function isTakeAway(): bool
-    {
-        return $this->order_mode === 'TAKE_AWAY';
-    }
-
-    public static function generateOrderNumber(string $branchId): string
-    {
-        $today = now()->format('ymd');
-        $prefix = "LW-{$today}";
-
-        $lastOrder = static::where('branch_id', $branchId)
-            ->where('order_number', 'LIKE', "{$prefix}%")
-            ->orderByDesc('order_number')
-            ->first();
-
-        if ($lastOrder) {
-            $lastNumber = (int) substr($lastOrder->order_number, -5);
-            $nextNumber = $lastNumber + 1;
-        } else {
-            $nextNumber = 1;
-        }
-
-        return $prefix . str_pad($nextNumber, 5, '0', STR_PAD_LEFT);
+        return match($this->status) {
+            'PENDING' => in_array($newStatus, ['CONFIRMED', 'CANCELLED']),
+            'CONFIRMED' => $newStatus === 'PREPARING',
+            'PREPARING' => $newStatus === 'READY',
+            'READY' => $newStatus === 'COMPLETED',
+            default => false,
+        };
     }
 }

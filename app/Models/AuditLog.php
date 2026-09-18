@@ -2,27 +2,17 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Traits\HasUuids;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Str;
 
 class AuditLog extends Model
 {
-    use HasFactory;
+    use HasUuids;
 
-    protected $keyType = 'string';
-    public $incrementing = false;
-    protected $guarded = [];
-
-    protected static function booted(): void
-    {
-        static::creating(function (AuditLog $model) {
-            if (empty($model->id)) {
-                $model->id = (string) Str::uuid();
-            }
-        });
-    }
+    protected $fillable = [
+        'user_id', 'action', 'entity_type', 'entity_id',
+        'before_data', 'after_data', 'ip_address', 'user_agent',
+    ];
 
     protected function casts(): array
     {
@@ -32,13 +22,8 @@ class AuditLog extends Model
         ];
     }
 
-    public function actor(): BelongsTo
+    public function user()
     {
-        return $this->belongsTo(User::class, 'actor_id');
-    }
-
-    public function branch(): BelongsTo
-    {
-        return $this->belongsTo(Branch::class);
+        return $this->belongsTo(User::class);
     }
 }

@@ -2,29 +2,25 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Traits\HasUuids;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Str;
 
 class Modifier extends Model
 {
-    use HasFactory;
+    use HasUuids;
 
-    protected $keyType = 'string';
-    public $incrementing = false;
-    protected $guarded = [];
+    protected $fillable = ['modifier_group_id', 'name', 'price', 'is_available', 'is_active', 'sort_order'];
 
-    protected static function booted(): void
+    protected function casts(): array
     {
-        static::creating(function (Modifier $model) {
-            if (empty($model->id)) {
-                $model->id = (string) Str::uuid();
-            }
-        });
+        return [
+            'price' => 'decimal:2',
+            'is_available' => 'boolean',
+            'is_active' => 'boolean',
+        ];
     }
 
-    public function modifierGroup(): BelongsTo
+    public function modifierGroup()
     {
         return $this->belongsTo(ModifierGroup::class);
     }

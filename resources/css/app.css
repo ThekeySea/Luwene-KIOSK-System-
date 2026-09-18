@@ -6,6 +6,7 @@
 @theme {
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-display: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif;
 
     /* Primary - Deep Maroon Red */
     --color-primary: #8A0000;
@@ -60,4 +61,26 @@
     --color-warm-800: #64584E;
     --color-warm-900: #534A42;
     --color-warm-950: #2C2622;
+}
+
+@utility scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+/*
+ * Kiosk portrait 1080x1920: skala 1.25x untuk seluruh tampilan customer.
+ * Semua utility Tailwind berbasis rem ikut membesar proporsional.
+ * Hanya aktif di viewport portrait >= 1024px (kiosk vertikal) dan hanya di
+ * layout customer (html.kiosk), sehingga desktop landscape 1920x1080,
+ * HP, serta halaman kasir/admin tetap berukuran normal.
+ */
+@media (min-width: 1024px) and (orientation: portrait) {
+    html.kiosk {
+        font-size: 20px;
+    }
 }

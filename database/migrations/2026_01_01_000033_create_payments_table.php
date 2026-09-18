@@ -11,21 +11,17 @@ return new class extends Migration
         Schema::create('payments', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->uuid('order_id');
-            $table->enum('payment_method', ['CASH', 'QRIS', 'OTHER'])->default('CASH');
-            $table->string('provider')->nullable();
-            $table->string('external_reference')->nullable();
+            $table->enum('method', ['CASH', 'QRIS', 'CARD', 'OTHER']);
             $table->decimal('amount', 14, 2);
+            $table->enum('status', ['UNPAID', 'PAID', 'FAILED', 'REFUNDED'])->default('UNPAID');
             $table->decimal('amount_received', 14, 2)->nullable();
-            $table->decimal('change_amount', 12, 2)->nullable();
-            $table->enum('status', ['PENDING', 'PAID', 'FAILED', 'CANCELLED', 'REFUNDED'])->default('PENDING');
+            $table->decimal('change_amount', 14, 2)->nullable();
+            $table->string('reference')->nullable();
             $table->timestamp('paid_at')->nullable();
-            $table->uuid('verified_by')->nullable();
             $table->timestamps();
 
             $table->index('order_id');
-            $table->index('status');
             $table->foreign('order_id')->references('id')->on('orders')->cascadeOnDelete();
-            $table->foreign('verified_by')->references('id')->on('users')->nullOnDelete();
         });
     }
 

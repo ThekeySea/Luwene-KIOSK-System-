@@ -3,237 +3,125 @@
 namespace Database\Seeders;
 
 use App\Models\Category;
-use App\Models\ModifierGroup;
 use App\Models\Product;
 use App\Models\ProductVariant;
+use App\Models\ModifierGroup;
+use App\Models\Modifier;
+use App\Models\ProductModifierGroup;
 use Illuminate\Database\Seeder;
 
 class ProductSeeder extends Seeder
 {
     public function run(): void
     {
-        $ayamCategory = Category::where('slug', 'ayam')->first();
-        $kambingCategory = Category::where('slug', 'kambing')->first();
-        $sapiCategory = Category::where('slug', 'sapi')->first();
-        $ikanCategory = Category::where('slug', 'ikan')->first();
-        $seafoodCategory = Category::where('slug', 'seafood')->first();
-        $nasiCategory = Category::where('slug', 'nasi-tambahan')->first();
-        $snackCategory = Category::where('slug', 'snack')->first();
-        $minumanCategory = Category::where('slug', 'minuman')->first();
+        // Modifier Groups
+        $nasiGroup = ModifierGroup::create(['name' => 'Pilihan Nasi', 'type' => 'NASI', 'is_required' => true, 'min_selection' => 1, 'max_selection' => 1]);
+        $spiceGroup = ModifierGroup::create(['name' => 'Level Pedas', 'type' => 'SPICE_LEVEL', 'is_required' => true, 'min_selection' => 1, 'max_selection' => 1]);
+        $extraGroup = ModifierGroup::create(['name' => 'Extra', 'type' => 'EXTRA', 'is_required' => false]);
 
-        // Ayam
-        $ayamProducts = [
-            ['name' => 'Ayam Goreng Luwene', 'slug' => 'ayam-goreng-luwene', 'base_price' => 12000, 'is_featured' => true],
-            ['name' => 'Ayam Bakar Luwene', 'slug' => 'ayam-bakar-luwene', 'base_price' => 14000, 'is_featured' => true],
-            ['name' => 'Ayam Geprek', 'slug' => 'ayam-geprek', 'base_price' => 13000],
-            ['name' => 'Ayam Penyet', 'slug' => 'ayam-penyet', 'base_price' => 13000],
-            ['name' => 'Ayam Kremes', 'slug' => 'ayam-kremes', 'base_price' => 14000],
+        Modifier::create(['modifier_group_id' => $nasiGroup->id, 'name' => 'Nasi Putih', 'price' => 0]);
+        Modifier::create(['modifier_group_id' => $nasiGroup->id, 'name' => 'Nasi Uduk', 'price' => 2000]);
+        Modifier::create(['modifier_group_id' => $nasiGroup->id, 'name' => 'Nasi Goreng', 'price' => 3000]);
+
+        Modifier::create(['modifier_group_id' => $spiceGroup->id, 'name' => 'Original', 'price' => 0]);
+        Modifier::create(['modifier_group_id' => $spiceGroup->id, 'name' => 'Nyolek', 'price' => 0]);
+        Modifier::create(['modifier_group_id' => $spiceGroup->id, 'name' => 'Nampol', 'price' => 0]);
+        Modifier::create(['modifier_group_id' => $spiceGroup->id, 'name' => 'Mampus', 'price' => 0]);
+
+        Modifier::create(['modifier_group_id' => $extraGroup->id, 'name' => 'Telur Ceplok', 'price' => 5000]);
+        Modifier::create(['modifier_group_id' => $extraGroup->id, 'name' => 'Tempe Goreng', 'price' => 3000]);
+        Modifier::create(['modifier_group_id' => $extraGroup->id, 'name' => 'Tahu Goreng', 'price' => 3000]);
+        Modifier::create(['modifier_group_id' => $extraGroup->id, 'name' => 'Lalapan', 'price' => 5000]);
+
+        // [category_slug, name, slug, description, base_price, is_featured, variants, is_food]
+        $products = [
+            // Ayam
+            ['ayam', 'Ayam Goreng Luwene', 'ayam-goreng-luwene', 'Ayam goreng bumbu khas, renyah di luar juicy di dalam', 15000, true, [
+                ['code' => 'ALA_CARTE', 'name' => 'Ala Carte', 'price' => 15000],
+                ['code' => 'PAKET_NASI', 'name' => 'Paket Nasi', 'price' => 17000],
+            ], true],
+            ['ayam', 'Ayam Bakar Madu', 'ayam-bakar-madu', 'Ayam bakar olesan madu, manis gurih', 18000, false, [
+                ['code' => 'ALA_CARTE', 'name' => 'Ala Carte', 'price' => 18000],
+                ['code' => 'PAKET_NASI', 'name' => 'Paket Nasi', 'price' => 20000],
+            ], true],
+            ['ayam', 'Ayam Geprek', 'ayam-geprek', 'Ayam crispy digeprek dengan sambal bawang', 16000, false, [
+                ['code' => 'ALA_CARTE', 'name' => 'Ala Carte', 'price' => 16000],
+                ['code' => 'PAKET_NASI', 'name' => 'Paket Nasi', 'price' => 18000],
+            ], true],
+            ['ayam', 'Sate Ayam', 'sate-ayam', '5 tusuk sate ayam bumbu kacang', 12000, false, [
+                ['code' => 'REGULER', 'name' => 'Reguler', 'price' => 12000],
+            ], true],
+            // Daging
+            ['daging', 'Rendang Sapi', 'rendang-sapi', 'Rendang sapi empuk dimasak perlahan', 25000, true, [
+                ['code' => 'REGULER', 'name' => 'Reguler', 'price' => 25000],
+            ], true],
+            ['daging', 'Empal Goreng', 'empal-goreng', 'Empal sapi manis gurih', 22000, false, [
+                ['code' => 'REGULER', 'name' => 'Reguler', 'price' => 22000],
+            ], true],
+            ['daging', 'Sate Sapi', 'sate-sapi', '5 tusuk sate sapi bumbu kecap', 20000, false, [
+                ['code' => 'REGULER', 'name' => 'Reguler', 'price' => 20000],
+            ], true],
+            // Seafood
+            ['seafood', 'Lele Goreng', 'lele-goreng', 'Lele goreng garing dengan lalapan', 12000, false, [
+                ['code' => 'REGULER', 'name' => 'Reguler', 'price' => 12000],
+            ], true],
+            ['seafood', 'Nila Bakar', 'nila-bakar', 'Ikan nila bakar bumbu kecap', 22000, false, [
+                ['code' => 'REGULER', 'name' => 'Reguler', 'price' => 22000],
+            ], true],
+            ['seafood', 'Udang Crispy', 'udang-crispy', 'Udang goreng tepung renyah', 24000, false, [
+                ['code' => 'REGULER', 'name' => 'Reguler', 'price' => 24000],
+            ], true],
+            ['seafood', 'Cumi Goreng Tepung', 'cumi-goreng-tepung', 'Cumi goreng tepung gurih', 24000, false, [
+                ['code' => 'REGULER', 'name' => 'Reguler', 'price' => 24000],
+            ], true],
+            // Sambal
+            ['sambal', 'Sambal Bawang', 'sambal-bawang', 'Sambal bawang pedas segar', 0, false, [], false],
+            ['sambal', 'Sambal Terasi', 'sambal-terasi', 'Sambal terasi matang', 0, false, [], false],
+            ['sambal', 'Sambal Ijo', 'sambal-ijo', 'Sambal cabai hijau', 0, false, [], false],
+            ['sambal', 'Sambal Matah', 'sambal-matah', 'Sambal matah Bali yang segar', 2000, false, [], false],
+            // Cemal Cemil
+            ['cemal-cemil', 'Kentang Goreng', 'kentang-goreng', 'Kentang goreng renyah', 10000, false, [], false],
+            ['cemal-cemil', 'Tahu Isi', 'tahu-isi', 'Tahu goreng isi sayur', 8000, false, [], false],
+            ['cemal-cemil', 'Tempe Mendoan', 'tempe-mendoan', 'Tempe mendoan setengah matang', 8000, false, [], false],
+            ['cemal-cemil', 'Pisang Goreng Coklat Keju', 'pisang-goreng-coklat-keju', 'Pisang goreng topping coklat keju', 12000, false, [], false],
+            // Minuman
+            ['minuman', 'Es Teh Manis', 'es-teh-manis', 'Es teh manis segar', 5000, true, [
+                ['code' => 'REGULER', 'name' => 'Reguler', 'price' => 5000],
+                ['code' => 'JUMBO', 'name' => 'Jumbo', 'price' => 7000],
+            ], false],
+            ['minuman', 'Es Jeruk Segar', 'es-jeruk-segar', 'Jeruk peras asli', 8000, false, [
+                ['code' => 'REGULER', 'name' => 'Reguler', 'price' => 8000],
+            ], false],
+            ['minuman', 'Teh Hangat', 'teh-hangat', 'Teh manis hangat', 4000, false, [], false],
+            ['minuman', 'Kopi Tubruk', 'kopi-tubruk', 'Kopi tubruk robusta', 8000, false, [], false],
         ];
 
-        foreach ($ayamProducts as $product) {
-            $p = Product::firstOrCreate(
-                ['slug' => $product['slug']],
-                array_merge($product, ['category_id' => $ayamCategory->id])
-            );
+        $sortOrder = 1;
+        foreach ($products as [$catSlug, $name, $slug, $description, $price, $featured, $variants, $isFood]) {
+            $category = Category::where('slug', $catSlug)->firstOrFail();
 
-            ProductVariant::firstOrCreate(
-                ['product_id' => $p->id, 'code' => 'ALA_CARTE'],
-                ['name' => 'Ala Carte', 'price' => $product['base_price']]
-            );
-            ProductVariant::firstOrCreate(
-                ['product_id' => $p->id, 'code' => 'PAKET_NASI'],
-                ['name' => 'Paket Nasi', 'price' => $product['base_price'] + 5000]
-            );
-        }
+            $product = Product::create([
+                'category_id' => $category->id,
+                'name' => $name,
+                'slug' => $slug,
+                'description' => $description,
+                'base_price' => $price,
+                'is_featured' => $featured,
+                'sort_order' => $sortOrder++,
+            ]);
 
-        // Kambing
-        $kambingProducts = [
-            ['name' => 'Kambing Bakar', 'slug' => 'kambing-bakar', 'base_price' => 25000],
-            ['name' => 'Kambing Goreng', 'slug' => 'kambing-goreng', 'base_price' => 25000],
-            ['name' => 'Sate Kambing', 'slug' => 'sate-kambing', 'base_price' => 22000],
-            ['name' => 'Tongseng Kambing', 'slug' => 'tongseng-kambing', 'base_price' => 28000],
-        ];
-
-        foreach ($kambingProducts as $product) {
-            $p = Product::firstOrCreate(
-                ['slug' => $product['slug']],
-                array_merge($product, ['category_id' => $kambingCategory->id])
-            );
-            ProductVariant::firstOrCreate(
-                ['product_id' => $p->id, 'code' => 'ALA_CARTE'],
-                ['name' => 'Ala Carte', 'price' => $product['base_price']]
-            );
-            ProductVariant::firstOrCreate(
-                ['product_id' => $p->id, 'code' => 'PAKET_NASI'],
-                ['name' => 'Paket Nasi', 'price' => $product['base_price'] + 5000]
-            );
-        }
-
-        // Sapi
-        $sapiProducts = [
-            ['name' => 'Sapi Bakar', 'slug' => 'sapi-bakar', 'base_price' => 22000],
-            ['name' => 'Sapi Goreng', 'slug' => 'sapi-goreng', 'base_price' => 22000],
-            ['name' => 'Sate Sapi', 'slug' => 'sate-sapi', 'base_price' => 20000],
-            ['name' => 'Tongseng Sapi', 'slug' => 'tongseng-sapi', 'base_price' => 25000],
-        ];
-
-        foreach ($sapiProducts as $product) {
-            $p = Product::firstOrCreate(
-                ['slug' => $product['slug']],
-                array_merge($product, ['category_id' => $sapiCategory->id])
-            );
-            ProductVariant::firstOrCreate(
-                ['product_id' => $p->id, 'code' => 'ALA_CARTE'],
-                ['name' => 'Ala Carte', 'price' => $product['base_price']]
-            );
-            ProductVariant::firstOrCreate(
-                ['product_id' => $p->id, 'code' => 'PAKET_NASI'],
-                ['name' => 'Paket Nasi', 'price' => $product['base_price'] + 5000]
-            );
-        }
-
-        // Ikan
-        $ikanProducts = [
-            ['name' => 'Ikan Bakar', 'slug' => 'ikan-bakar', 'base_price' => 18000],
-            ['name' => 'Ikan Goreng', 'slug' => 'ikan-goreng', 'base_price' => 18000],
-            ['name' => 'Ikan Penyet', 'slug' => 'ikan-penyet', 'base_price' => 18000],
-        ];
-
-        foreach ($ikanProducts as $product) {
-            $p = Product::firstOrCreate(
-                ['slug' => $product['slug']],
-                array_merge($product, ['category_id' => $ikanCategory->id])
-            );
-            ProductVariant::firstOrCreate(
-                ['product_id' => $p->id, 'code' => 'ALA_CARTE'],
-                ['name' => 'Ala Carte', 'price' => $product['base_price']]
-            );
-            ProductVariant::firstOrCreate(
-                ['product_id' => $p->id, 'code' => 'PAKET_NASI'],
-                ['name' => 'Paket Nasi', 'price' => $product['base_price'] + 5000]
-            );
-        }
-
-        // Seafood
-        $seafoodProducts = [
-            ['name' => 'Udang Goreng', 'slug' => 'udang-goreng', 'base_price' => 20000],
-            ['name' => 'Cumi Goreng', 'slug' => 'cumi-goreng', 'base_price' => 22000],
-            ['name' => 'Kepiting Saus Tiram', 'slug' => 'kepiting-saus-tiram', 'base_price' => 35000],
-        ];
-
-        foreach ($seafoodProducts as $product) {
-            $p = Product::firstOrCreate(
-                ['slug' => $product['slug']],
-                array_merge($product, ['category_id' => $seafoodCategory->id])
-            );
-            ProductVariant::firstOrCreate(
-                ['product_id' => $p->id, 'code' => 'ALA_CARTE'],
-                ['name' => 'Ala Carte', 'price' => $product['base_price']]
-            );
-            ProductVariant::firstOrCreate(
-                ['product_id' => $p->id, 'code' => 'PAKET_NASI'],
-                ['name' => 'Paket Nasi', 'price' => $product['base_price'] + 5000]
-            );
-        }
-
-        // Nasi & Tambahan
-        $nasiProducts = [
-            ['name' => 'Nasi Putih', 'slug' => 'nasi-putih', 'base_price' => 5000],
-            ['name' => 'Nasi Uduk', 'slug' => 'nasi-uduk', 'base_price' => 7000],
-            ['name' => 'Nasi Daun Jeruk', 'slug' => 'nasi-daun-jeruk', 'base_price' => 7000],
-            ['name' => 'Telur Ceplok', 'slug' => 'telur-ceplok', 'base_price' => 5000],
-            ['name' => 'Telur Dadar', 'slug' => 'telur-dadar', 'base_price' => 5000],
-            ['name' => 'Kerupuk', 'slug' => 'kerupuk', 'base_price' => 3000],
-            ['name' => 'Lalapan', 'slug' => 'lalapan', 'base_price' => 3000],
-        ];
-
-        foreach ($nasiProducts as $product) {
-            Product::firstOrCreate(
-                ['slug' => $product['slug']],
-                array_merge($product, ['category_id' => $nasiCategory->id])
-            );
-        }
-
-        // Snack
-        $snackProducts = [
-            ['name' => 'Tempe Goreng', 'slug' => 'tempe-goreng', 'base_price' => 5000],
-            ['name' => 'Tahu Goreng', 'slug' => 'tahu-goreng', 'base_price' => 5000],
-            ['name' => 'Kentang Goreng', 'slug' => 'kentang-goreng', 'base_price' => 8000],
-            ['name' => 'Jamur Crispy', 'slug' => 'jamur-crispy', 'base_price' => 10000],
-        ];
-
-        foreach ($snackProducts as $product) {
-            Product::firstOrCreate(
-                ['slug' => $product['slug']],
-                array_merge($product, ['category_id' => $snackCategory->id])
-            );
-        }
-
-        // Minuman
-        $minumanProducts = [
-            ['name' => 'Es Teh Manis', 'slug' => 'es-teh-manis', 'base_price' => 5000],
-            ['name' => 'Es Teh Tawar', 'slug' => 'es-teh-tawar', 'base_price' => 4000],
-            ['name' => 'Es Jeruk', 'slug' => 'es-jeruk', 'base_price' => 7000],
-            ['name' => 'Es Jeruk Peras', 'slug' => 'es-jeruk-peras', 'base_price' => 10000],
-            ['name' => 'Es Kelapa Muda', 'slug' => 'es-kelapa-muda', 'base_price' => 12000],
-            ['name' => 'Air Mineral', 'slug' => 'air-mineral', 'base_price' => 4000],
-        ];
-
-        foreach ($minumanProducts as $product) {
-            Product::firstOrCreate(
-                ['slug' => $product['slug']],
-                array_merge($product, ['category_id' => $minumanCategory->id])
-            );
-        }
-
-        // Nasi Modifier Group
-        $nasiGroup = ModifierGroup::firstOrCreate(
-            ['name' => 'Pilihan Nasi'],
-            [
-                'selection_type' => 'SINGLE',
-                'min_selection' => 1,
-                'max_selection' => 1,
-                'is_required' => true,
-                'sort_order' => 1,
-            ]
-        );
-
-        $nasiProducts = ['Nasi Putih', 'Nasi Uduk', 'Nasi Daun Jeruk'];
-        foreach ($nasiProducts as $index => $nasiName) {
-            $nasiProduct = Product::where('slug', \Illuminate\Support\Str::slug($nasiName))->first();
-            if ($nasiProduct) {
-                \App\Models\Modifier::firstOrCreate(
-                    ['modifier_group_id' => $nasiGroup->id, 'name' => $nasiName],
-                    ['price' => 0, 'sort_order' => $index + 1]
-                );
+            foreach ($variants as $index => $variant) {
+                ProductVariant::create(array_merge($variant, [
+                    'product_id' => $product->id,
+                    'sort_order' => $index,
+                ]));
             }
-        }
 
-        // Extra Modifier Group
-        $extraGroup = ModifierGroup::firstOrCreate(
-            ['name' => 'Extra'],
-            [
-                'selection_type' => 'MULTIPLE',
-                'min_selection' => 0,
-                'max_selection' => 10,
-                'is_required' => false,
-                'sort_order' => 2,
-            ]
-        );
-
-        $extras = [
-            ['name' => 'Telur Ceplok', 'price' => 5000],
-            ['name' => 'Telur Dadar', 'price' => 5000],
-            ['name' => 'Kerupuk', 'price' => 3000],
-            ['name' => 'Lalapan', 'price' => 3000],
-            ['name' => 'Nasi Tambahan', 'price' => 5000],
-        ];
-
-        foreach ($extras as $index => $extra) {
-            \App\Models\Modifier::firstOrCreate(
-                ['modifier_group_id' => $extraGroup->id, 'name' => $extra['name']],
-                ['price' => $extra['price'], 'sort_order' => $index + 1]
-            );
+            if ($isFood) {
+                ProductModifierGroup::create(['product_id' => $product->id, 'modifier_group_id' => $nasiGroup->id, 'is_required' => true, 'min_selection' => 1, 'max_selection' => 1, 'sort_order' => 1]);
+                ProductModifierGroup::create(['product_id' => $product->id, 'modifier_group_id' => $spiceGroup->id, 'is_required' => true, 'min_selection' => 1, 'max_selection' => 1, 'sort_order' => 2]);
+                ProductModifierGroup::create(['product_id' => $product->id, 'modifier_group_id' => $extraGroup->id, 'is_required' => false, 'min_selection' => 0, 'max_selection' => null, 'sort_order' => 3]);
+            }
         }
     }
 }

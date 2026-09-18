@@ -2,35 +2,23 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Traits\HasUuids;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Str;
 
 class ModifierGroup extends Model
 {
-    use HasFactory;
+    use HasUuids;
 
-    protected $keyType = 'string';
-    public $incrementing = false;
-    protected $guarded = [];
+    protected $fillable = ['name', 'description', 'type', 'min_selection', 'max_selection', 'is_required', 'sort_order'];
 
-    protected static function booted(): void
+    public function modifiers()
     {
-        static::creating(function (ModifierGroup $model) {
-            if (empty($model->id)) {
-                $model->id = (string) Str::uuid();
-            }
-        });
+        return $this->hasMany(Modifier::class)->orderBy('sort_order');
     }
 
-    public function modifiers(): HasMany
+    public function products()
     {
-        return $this->hasMany(Modifier::class);
-    }
-
-    public function productModifierGroups(): HasMany
-    {
-        return $this->hasMany(ProductModifierGroup::class);
+        return $this->belongsToMany(Product::class, 'product_modifier_groups')
+            ->withPivot('is_required', 'min_selection', 'max_selection', 'sort_order');
     }
 }
