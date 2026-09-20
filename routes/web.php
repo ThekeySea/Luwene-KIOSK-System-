@@ -89,9 +89,27 @@ Route::middleware(['auth', 'role:ADMIN', 'restaurant.context'])->prefix('admin')
     Route::get('/settings', App\Livewire\Admin\Settings::class)->name('settings');
 });
 
-// Delivery - placeholder (akan dibangun di fase berikutnya)
+// Delivery - public
 Route::prefix('delivery')->name('delivery.')->group(function () {
-    Route::get('/home', function () {
-        return redirect()->route('home')->with('error', 'Fitur Delivery segera hadir!');
-    })->name('home');
+    Route::get('/', App\Livewire\Delivery\EntryPage::class)->name('entry');
+    Route::get('/login', App\Livewire\Delivery\Login::class)->name('login');
+    Route::get('/register', App\Livewire\Delivery\Register::class)->name('register');
+    Route::post('/logout', function () {
+        Auth::logout();
+        session()->invalidate();
+        session()->regenerateToken();
+        return redirect()->route('delivery.entry');
+    })->name('logout');
+});
+
+// Delivery - auth required
+Route::middleware(['auth', 'role:CUSTOMER'])->prefix('delivery')->name('delivery.')->group(function () {
+    Route::get('/home', App\Livewire\Delivery\Home::class)->name('home');
+    Route::get('/branch/{branchId}', App\Livewire\Delivery\BranchMenu::class)->name('branch');
+    Route::get('/orders', function () {
+        return redirect()->route('delivery.home');
+    })->name('orders');
+    Route::get('/profile', function () {
+        return redirect()->route('delivery.home');
+    })->name('profile');
 });

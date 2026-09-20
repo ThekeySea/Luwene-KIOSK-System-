@@ -27,7 +27,7 @@ class EntryPage extends Component
 
     public function selectDelivery()
     {
-        return redirect()->route('delivery.home');
+        return redirect()->route('delivery.entry');
     }
 
     public function selectTable(string $tableId)
