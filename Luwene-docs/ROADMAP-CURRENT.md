@@ -1,6 +1,6 @@
-# LUWENE - ROADMAP PEMBANGUNAN ULANG
+# LUWENE - ROADMAP PEMBANGUNAN ULANG (DETAILED)
 
-> Terakhir diperbarui: 18 September 2026
+> Terakhir diperbarui: 19 September 2026
 > Tech Stack: Laravel 13 + Livewire 4 + Tailwind CSS v4 + SQLite
 
 ---
@@ -14,9 +14,11 @@
 | 2 | Autentikasi & Otorisasi | SELESAI |
 | 3 | Customer Kiosk (Pemesanan) | SELESAI |
 | 4 | Kasir POS (Transaksi) | SELESAI |
-| 5 | Admin Dashboard (Manajemen) | BELUM SELESAI |
-| 6 | Integrasi & Polishing | BELUM SELESAI |
+| 5 | Admin Dashboard (Manajemen) | SELESAI |
+| 6 | Integrasi & Polishing | SELESAI |
 | 7 | Testing & Deployment | BELUM SELESAI |
+
+> Lihat `LUWENE-ROADMAP.md` di root project untuk roadmap ringkas yang selalu terbaru.
 
 ---
 

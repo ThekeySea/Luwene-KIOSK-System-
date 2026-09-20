@@ -10,9 +10,10 @@ class Menu extends Component
     public function render()
     {
         $categories = Category::where('is_active', true)
+            ->where('is_published', true)
             ->orderBy('sort_order')
             ->withCount(['products' => function ($query) {
-                $query->where('is_active', true);
+                $query->where('is_active', true)->where('is_published', true);
             }])
             ->get();
 

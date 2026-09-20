@@ -12,11 +12,11 @@ class DatabaseSeeder extends Seeder
             BranchSeeder::class,
             RestaurantTableSeeder::class,
             CategorySeeder::class,
-            SpiceLevelSeeder::class,
             SambalSeeder::class,
             ProductSeeder::class,
             PackageSeeder::class,
             PromoSeeder::class,
+            SettingSeeder::class,
             UserSeeder::class,
         ]);
     }

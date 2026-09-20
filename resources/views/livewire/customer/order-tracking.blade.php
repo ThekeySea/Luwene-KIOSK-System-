@@ -1,4 +1,4 @@
-    <div class="min-h-dvh bg-warm-50">
+    <div class="min-h-dvh bg-warm-50" wire:poll.5s>
         <header class="bg-white shadow-sm sticky top-0 z-10">
             <div class="max-w-3xl mx-auto px-4 py-4 flex items-center justify-between">
                 <a href="{{ route('customer.dashboard') }}" class="text-warm-400 hover:text-dark transition">

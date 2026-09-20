@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Traits\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
 
 class Product extends Model
 {
@@ -12,7 +13,7 @@ class Product extends Model
 
     protected $fillable = [
         'category_id', 'name', 'slug', 'description', 'image',
-        'base_price', 'is_active', 'is_available', 'is_featured', 'sort_order',
+        'base_price', 'is_active', 'is_available', 'is_featured', 'is_published', 'sort_order',
     ];
 
     protected function casts(): array
@@ -22,6 +23,7 @@ class Product extends Model
             'is_active' => 'boolean',
             'is_available' => 'boolean',
             'is_featured' => 'boolean',
+            'is_published' => 'boolean',
         ];
     }
 
@@ -49,6 +51,13 @@ class Product extends Model
         return $this->belongsToMany(ModifierGroup::class, 'product_modifier_groups')
             ->withPivot('is_required', 'min_selection', 'max_selection', 'sort_order')
             ->withPivot('id as pivot_id')
+            ->orderByPivot('sort_order');
+    }
+
+    public function sambals()
+    {
+        return $this->belongsToMany(Sambal::class, 'product_sambals')
+            ->withPivot('price', 'is_required', 'sort_order')
             ->orderByPivot('sort_order');
     }
 

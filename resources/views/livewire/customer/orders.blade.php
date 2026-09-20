@@ -38,8 +38,10 @@
                     </div>
                 </div>
             @empty
-                <div class="text-center py-12 text-warm-400">
-                    <p>Belum ada pesanan</p>
+                <div class="text-center py-16">
+                    <div class="text-4xl mb-3">🧾</div>
+                    <p class="text-warm-500 text-sm">Belum ada pesanan</p>
+                    <a href="{{ route('customer.menu') }}" class="inline-block mt-3 px-6 py-2 bg-primary text-white text-sm font-semibold rounded-xl hover:bg-primary-700 transition">Mulai Pesan</a>
                 </div>
             @endforelse
         </div>

@@ -59,6 +59,22 @@
             </div>
         </nav>
     @endif
+    <div
+        x-data="{ toasts: [], push(message, type) { const id = Date.now() + Math.random(); this.toasts.push({ id, message, type: type || 'info' }); setTimeout(() => { this.toasts = this.toasts.filter(t => t.id !== id); }, 4000); }, dismiss(id) { this.toasts = this.toasts.filter(t => t.id !== id); } }"
+        @toast.window="push($event.detail.message, $event.detail.type)"
+        class="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-full max-w-sm px-4 space-y-2"
+        aria-live="polite"
+    >
+        <template x-for="toast in toasts" :key="toast.id">
+            <div
+                class="flex items-start gap-3 px-4 py-3 rounded-2xl shadow-lg text-sm font-medium text-white"
+                :class="toast.type === 'success' ? 'bg-green-600' : (toast.type === 'error' ? 'bg-red-600' : 'bg-dark-800')"
+            >
+                <span class="flex-1" x-text="toast.message"></span>
+                <button @click="dismiss(toast.id)" class="opacity-70 hover:opacity-100 transition shrink-0" aria-label="Tutup">✕</button>
+            </div>
+        </template>
+    </div>
     @livewireScripts
 </body>
 </html>

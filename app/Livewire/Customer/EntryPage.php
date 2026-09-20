@@ -39,7 +39,7 @@ class EntryPage extends Component
             'table_id' => $table->id,
             'order_mode' => 'DINE_IN',
             'session_token' => Str::uuid()->toString(),
-            'status' => 'OPEN',
+            'status' => 'ACTIVE',
         ]);
 
         $table->update(['status' => 'OCCUPIED']);
@@ -58,6 +58,6 @@ class EntryPage extends Component
 
         return view('livewire.customer.entry-page', [
             'tables' => $tables,
-        ])->layout('components.layouts.customer');
+        ])->layout('components.layouts.customer', ['showNav' => false]);
     }
 }

@@ -3,9 +3,15 @@
 namespace App\Services;
 
 use App\Models\Promo;
+use App\Models\Setting;
 
 class CartPricing
 {
+    public static function taxRate(): float
+    {
+        return (float) Setting::get('tax_rate', '11') / 100;
+    }
+
     public static function items(): array
     {
         return session('cart', []);
@@ -51,7 +57,7 @@ class CartPricing
 
     public static function tax(): float
     {
-        return (static::subtotal() - static::discount()) * 0.11;
+        return (static::subtotal() - static::discount()) * static::taxRate();
     }
 
     public static function total(): float

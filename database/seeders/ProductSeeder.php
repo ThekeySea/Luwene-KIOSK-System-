@@ -15,23 +15,19 @@ class ProductSeeder extends Seeder
     public function run(): void
     {
         // Modifier Groups
-        $nasiGroup = ModifierGroup::create(['name' => 'Pilihan Nasi', 'type' => 'NASI', 'is_required' => true, 'min_selection' => 1, 'max_selection' => 1]);
-        $spiceGroup = ModifierGroup::create(['name' => 'Level Pedas', 'type' => 'SPICE_LEVEL', 'is_required' => true, 'min_selection' => 1, 'max_selection' => 1]);
-        $extraGroup = ModifierGroup::create(['name' => 'Extra', 'type' => 'EXTRA', 'is_required' => false]);
+        $nasiGroup = ModifierGroup::create(['name' => 'Pilihan Nasi', 'type' => 'NASI', 'is_required' => true, 'min_selection' => 1, 'max_selection' => 1, 'sort_order' => 1]);
+        $extraGroup = ModifierGroup::create(['name' => 'Extra', 'type' => 'EXTRA', 'is_required' => false, 'sort_order' => 2]);
 
-        Modifier::create(['modifier_group_id' => $nasiGroup->id, 'name' => 'Nasi Putih', 'price' => 0]);
-        Modifier::create(['modifier_group_id' => $nasiGroup->id, 'name' => 'Nasi Uduk', 'price' => 2000]);
-        Modifier::create(['modifier_group_id' => $nasiGroup->id, 'name' => 'Nasi Goreng', 'price' => 3000]);
+        // Nasi modifiers
+        Modifier::create(['modifier_group_id' => $nasiGroup->id, 'name' => 'Nasi Putih', 'price' => 0, 'sort_order' => 0]);
+        Modifier::create(['modifier_group_id' => $nasiGroup->id, 'name' => 'Nasi Uduk', 'price' => 2000, 'sort_order' => 1]);
+        Modifier::create(['modifier_group_id' => $nasiGroup->id, 'name' => 'Nasi Goreng', 'price' => 3000, 'sort_order' => 2]);
 
-        Modifier::create(['modifier_group_id' => $spiceGroup->id, 'name' => 'Original', 'price' => 0]);
-        Modifier::create(['modifier_group_id' => $spiceGroup->id, 'name' => 'Nyolek', 'price' => 0]);
-        Modifier::create(['modifier_group_id' => $spiceGroup->id, 'name' => 'Nampol', 'price' => 0]);
-        Modifier::create(['modifier_group_id' => $spiceGroup->id, 'name' => 'Mampus', 'price' => 0]);
-
-        Modifier::create(['modifier_group_id' => $extraGroup->id, 'name' => 'Telur Ceplok', 'price' => 5000]);
-        Modifier::create(['modifier_group_id' => $extraGroup->id, 'name' => 'Tempe Goreng', 'price' => 3000]);
-        Modifier::create(['modifier_group_id' => $extraGroup->id, 'name' => 'Tahu Goreng', 'price' => 3000]);
-        Modifier::create(['modifier_group_id' => $extraGroup->id, 'name' => 'Lalapan', 'price' => 5000]);
+        // Extra modifiers
+        Modifier::create(['modifier_group_id' => $extraGroup->id, 'name' => 'Telur Ceplok', 'price' => 5000, 'sort_order' => 0]);
+        Modifier::create(['modifier_group_id' => $extraGroup->id, 'name' => 'Tempe Goreng', 'price' => 3000, 'sort_order' => 1]);
+        Modifier::create(['modifier_group_id' => $extraGroup->id, 'name' => 'Tahu Goreng', 'price' => 3000, 'sort_order' => 2]);
+        Modifier::create(['modifier_group_id' => $extraGroup->id, 'name' => 'Lalapan', 'price' => 5000, 'sort_order' => 3]);
 
         // [category_slug, name, slug, description, base_price, is_featured, variants, is_food]
         $products = [
@@ -74,7 +70,7 @@ class ProductSeeder extends Seeder
             ['seafood', 'Cumi Goreng Tepung', 'cumi-goreng-tepung', 'Cumi goreng tepung gurih', 24000, false, [
                 ['code' => 'REGULER', 'name' => 'Reguler', 'price' => 24000],
             ], true],
-            // Sambal
+            // Sambal (standalone products)
             ['sambal', 'Sambal Bawang', 'sambal-bawang', 'Sambal bawang pedas segar', 0, false, [], false],
             ['sambal', 'Sambal Terasi', 'sambal-terasi', 'Sambal terasi matang', 0, false, [], false],
             ['sambal', 'Sambal Ijo', 'sambal-ijo', 'Sambal cabai hijau', 0, false, [], false],
@@ -107,6 +103,8 @@ class ProductSeeder extends Seeder
                 'description' => $description,
                 'base_price' => $price,
                 'is_featured' => $featured,
+                'is_active' => true,
+                'is_published' => true,
                 'sort_order' => $sortOrder++,
             ]);
 
@@ -118,9 +116,7 @@ class ProductSeeder extends Seeder
             }
 
             if ($isFood) {
-                ProductModifierGroup::create(['product_id' => $product->id, 'modifier_group_id' => $nasiGroup->id, 'is_required' => true, 'min_selection' => 1, 'max_selection' => 1, 'sort_order' => 1]);
-                ProductModifierGroup::create(['product_id' => $product->id, 'modifier_group_id' => $spiceGroup->id, 'is_required' => true, 'min_selection' => 1, 'max_selection' => 1, 'sort_order' => 2]);
-                ProductModifierGroup::create(['product_id' => $product->id, 'modifier_group_id' => $extraGroup->id, 'is_required' => false, 'min_selection' => 0, 'max_selection' => null, 'sort_order' => 3]);
+                // Modifier groups and sambals are assigned manually per product via admin panel
             }
         }
     }

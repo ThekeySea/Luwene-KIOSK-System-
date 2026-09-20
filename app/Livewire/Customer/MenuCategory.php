@@ -13,8 +13,9 @@ class MenuCategory extends Component
     {
         $this->category = Category::where('slug', $categorySlug)
             ->where('is_active', true)
+            ->where('is_published', true)
             ->with(['products' => function ($query) {
-                $query->where('is_active', true)->orderBy('sort_order')->with('variants');
+                $query->where('is_active', true)->where('is_published', true)->orderBy('sort_order')->with('variants');
             }])
             ->firstOrFail();
     }
@@ -22,9 +23,10 @@ class MenuCategory extends Component
     public function render()
     {
         $categories = Category::where('is_active', true)
+            ->where('is_published', true)
             ->orderBy('sort_order')
             ->withCount(['products' => function ($query) {
-                $query->where('is_active', true);
+                $query->where('is_active', true)->where('is_published', true);
             }])
             ->get();
 

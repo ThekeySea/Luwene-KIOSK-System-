@@ -8,6 +8,7 @@ use App\Models\OrderItem;
 use App\Models\OrderItemModifier;
 use App\Models\Payment;
 use App\Models\RestaurantTable;
+use App\Models\Setting;
 use App\Services\CartPricing;
 use Illuminate\Support\Str;
 use Livewire\Component;
@@ -74,8 +75,9 @@ class Checkout extends Component
             }
 
             $maxNumber = Order::where('branch_id', $branchId)->max('order_number');
-            $next = $maxNumber ? (int) substr($maxNumber, 3) + 1 : 1;
-            $orderNumber = 'LW-' . str_pad($next, 5, '0', STR_PAD_LEFT);
+            $prefix = Setting::get('order_prefix', 'LW');
+            $next = $maxNumber ? (int) substr($maxNumber, strlen($prefix) + 1) + 1 : 1;
+            $orderNumber = $prefix . '-' . str_pad($next, 5, '0', STR_PAD_LEFT);
 
             $order = Order::create([
                 'branch_id' => $branchId,

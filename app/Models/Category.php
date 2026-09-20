@@ -10,7 +10,15 @@ class Category extends Model
 {
     use HasUuids;
 
-    protected $fillable = ['name', 'slug', 'description', 'sort_order', 'is_active'];
+    protected $fillable = ['name', 'slug', 'description', 'sort_order', 'is_active', 'is_published'];
+
+    protected function casts(): array
+    {
+        return [
+            'is_active' => 'boolean',
+            'is_published' => 'boolean',
+        ];
+    }
 
     protected static function booted(): void
     {

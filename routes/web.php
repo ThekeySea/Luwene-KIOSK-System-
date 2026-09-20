@@ -36,11 +36,19 @@ Route::prefix('customer')->name('customer.')->group(function () {
     Route::get('/order/{orderId}/success', App\Livewire\Customer\OrderSuccess::class)->name('order-success');
     Route::get('/order/{orderId}/receipt', function (string $orderId) {
         $order = \App\Models\Order::with(['items.modifiers', 'payment', 'branch', 'table'])->findOrFail($orderId);
+        $barcode = \Milon\Barcode\Facades\DNS1DFacade::getBarcodePNG($order->order_number, 'C128', 2, 60);
 
-        return response(view('receipts.order-plain', ['order' => $order])->render(), 200, [
-            'Content-Type' => 'text/plain; charset=UTF-8',
-            'Content-Disposition' => 'attachment; filename="struk-'.$order->order_number.'.txt"',
+        $trackingUrl = route('customer.order-tracking', $order->id);
+        $qrCode = \Milon\Barcode\Facades\DNS2DFacade::getBarcodePNG($trackingUrl, 'QR', 4, 4);
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('receipts.order-pdf', [
+            'order' => $order,
+            'barcode' => $barcode,
+            'qrCode' => $qrCode,
         ]);
+        $pdf->setPaper([0, 0, 226.77, 650], 'portrait');
+
+        return $pdf->download('struk-'.$order->order_number.'.pdf');
     })->name('order-receipt');
     Route::get('/promo', App\Livewire\Customer\Promo::class)->name('promo');
     Route::get('/faq', App\Livewire\Customer\Faq::class)->name('faq');
@@ -57,9 +65,23 @@ Route::middleware(['auth', 'role:CUSTOMER'])->prefix('customer')->name('customer
 Route::middleware(['auth', 'role:CASHIER,ADMIN', 'restaurant.context'])->prefix('kasir')->name('cashier.')->group(function () {
     Route::get('/dashboard', App\Livewire\Staff\CashierDashboard::class)->name('dashboard');
     Route::get('/pos', App\Livewire\Staff\Pos::class)->name('pos');
+    Route::get('/scan', App\Livewire\Staff\ScanOrder::class)->name('scan');
+    Route::get('/scan/{code}', function (string $code) {
+        return redirect()->route('cashier.scan', ['code' => $code]);
+    })->where('code', '[A-Za-z0-9-]+')->name('scan-code');
 });
 
 // Admin
 Route::middleware(['auth', 'role:ADMIN', 'restaurant.context'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', App\Livewire\Staff\AdminDashboard::class)->name('dashboard');
+    Route::get('/products', App\Livewire\Admin\Products::class)->name('products');
+    Route::get('/categories', App\Livewire\Admin\Categories::class)->name('categories');
+    Route::get('/sambals', App\Livewire\Admin\Sambals::class)->name('sambals');
+    Route::get('/addons', App\Livewire\Admin\ModifierGroups::class)->name('modifier-groups');
+    Route::get('/promos', App\Livewire\Admin\Promos::class)->name('promos');
+    Route::get('/branches', App\Livewire\Admin\Branches::class)->name('branches');
+    Route::get('/staff', App\Livewire\Admin\Staff::class)->name('staff');
+    Route::get('/transactions', App\Livewire\Admin\Transactions::class)->name('transactions');
+    Route::get('/reports', App\Livewire\Admin\Reports::class)->name('reports');
+    Route::get('/settings', App\Livewire\Admin\Settings::class)->name('settings');
 });

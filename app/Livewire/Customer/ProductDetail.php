@@ -3,44 +3,78 @@
 namespace App\Livewire\Customer;
 
 use App\Models\Product;
-use App\Models\Sambal;
-use App\Models\SpiceLevel;
 use Livewire\Component;
 
 class ProductDetail extends Component
 {
     public Product $product;
     public string $selectedVariant = '';
+    public string $selectedNasi = '';
     public string $selectedSambal = '';
     public string $selectedSpiceLevel = '';
     public array $selectedExtras = [];
     public int $quantity = 1;
 
+    // Computed names for cart
+    public string $nasiName = '';
     public string $sambalName = '';
     public string $spiceLevelName = '';
 
     protected function rules(): array
     {
-        $isFood = in_array($this->product->category->slug ?? '', ['ayam', 'daging', 'seafood']);
-
         return [
             'selectedVariant' => $this->product->variants->count() > 0 ? 'required' : 'nullable',
-            'selectedSambal' => $isFood ? 'required' : 'nullable',
-            'selectedSpiceLevel' => $isFood ? 'required' : 'nullable',
+            'selectedNasi' => $this->showNasi && $this->nasiIsRequired ? 'required' : 'nullable',
+            'selectedSambal' => $this->hasSambal && $this->sambalIsRequired ? 'required' : 'nullable',
+            'selectedSpiceLevel' => $this->selectedSambal && $this->currentSambal?->spiceLevels->count() > 0 ? 'required' : 'nullable',
             'quantity' => 'required|min:1|max:20',
         ];
     }
 
-    public function getRequiresConfigProperty(): bool
+    public function getShowNasiProperty(): bool
     {
-        return in_array($this->product->category->slug ?? '', ['ayam', 'daging', 'seafood']);
+        if (!$this->product->modifierGroups->contains('type', 'NASI')) {
+            return false;
+        }
+        $variant = $this->product->variants->firstWhere('id', $this->selectedVariant);
+        return !$variant || $variant->code !== 'ALA_CARTE';
+    }
+
+    public function getNasiIsRequiredProperty(): bool
+    {
+        $nasiGroup = $this->product->modifierGroups->firstWhere('type', 'NASI');
+        return $nasiGroup ? (bool) $nasiGroup->pivot->is_required : false;
+    }
+
+    public function getHasSambalProperty(): bool
+    {
+        return $this->product->sambals->count() > 0;
+    }
+
+    public function getSambalIsRequiredProperty(): bool
+    {
+        return $this->product->sambals->contains('pivot.is_required', true);
+    }
+
+    public function getCurrentSambalProperty()
+    {
+        if (empty($this->selectedSambal)) {
+            return null;
+        }
+        return $this->product->sambals->firstWhere('id', $this->selectedSambal);
     }
 
     public function mount(string $slug): void
     {
-        $this->product = Product::with(['category', 'variants', 'modifierGroups.modifiers'])
+        $this->product = Product::with([
+            'category',
+            'variants',
+            'sambals.spiceLevels',
+            'modifierGroups.modifiers',
+        ])
             ->where('slug', $slug)
             ->where('is_active', true)
+            ->where('is_published', true)
             ->firstOrFail();
 
         if ($this->product->variants->count() > 0) {
@@ -52,6 +86,28 @@ class ProductDetail extends Component
     {
         $variant = $this->product->variants->firstWhere('id', $this->selectedVariant);
         return $variant ? (float) $variant->price : (float) $this->product->base_price;
+    }
+
+    public function getNasiPriceProperty(): float
+    {
+        if (empty($this->selectedNasi)) {
+            return 0;
+        }
+        $nasiGroup = $this->product->modifierGroups->firstWhere('type', 'NASI');
+        if (!$nasiGroup) {
+            return 0;
+        }
+        $modifier = $nasiGroup->modifiers->firstWhere('id', $this->selectedNasi);
+        return $modifier ? (float) $modifier->price : 0;
+    }
+
+    public function getSambalPriceProperty(): float
+    {
+        $sambal = $this->currentSambal;
+        if (!$sambal) {
+            return 0;
+        }
+        return (float) $sambal->pivot->price;
     }
 
     public function getExtrasTotalProperty(): float
@@ -68,20 +124,21 @@ class ProductDetail extends Component
         return $total;
     }
 
-    public function getSambalPriceProperty(): float
-    {
-        if (empty($this->selectedSambal)) {
-            return 0;
-        }
-
-        $sambal = Sambal::find($this->selectedSambal);
-
-        return $sambal ? (float) $sambal->price : 0;
-    }
-
     public function getTotalPriceProperty(): float
     {
-        return ($this->variantPrice + $this->sambalPrice + $this->extrasTotal) * $this->quantity;
+        return ($this->variantPrice + $this->nasiPrice + $this->sambalPrice + $this->extrasTotal) * $this->quantity;
+    }
+
+    public function updatedSelectedSambal(): void
+    {
+        $this->selectedSpiceLevel = '';
+    }
+
+    public function updatedSelectedVariant(): void
+    {
+        if (!$this->showNasi) {
+            $this->selectedNasi = '';
+        }
     }
 
     public function addToCart()
@@ -89,9 +146,14 @@ class ProductDetail extends Component
         $this->validate();
 
         $variant = $this->product->variants->firstWhere('id', $this->selectedVariant);
-        $sambal = Sambal::find($this->selectedSambal);
-        $spiceLevel = SpiceLevel::find($this->selectedSpiceLevel);
+        $sambal = $this->currentSambal;
+        $spiceLevel = $sambal?->spiceLevels->firstWhere('id', $this->selectedSpiceLevel);
 
+        // Nasi
+        $nasiGroup = $this->product->modifierGroups->firstWhere('type', 'NASI');
+        $nasiModifier = $nasiGroup?->modifiers->firstWhere('id', $this->selectedNasi);
+
+        // Extras
         $extras = [];
         $extraGroup = $this->product->modifierGroups->firstWhere('type', 'EXTRA');
         if ($extraGroup) {
@@ -108,6 +170,9 @@ class ProductDetail extends Component
         }
 
         $modifiers = [];
+        if ($this->showNasi && $nasiModifier) {
+            $modifiers[] = ['id' => $nasiModifier->id, 'name' => $nasiModifier->name, 'price' => (float) $nasiModifier->price, 'type' => 'NASI'];
+        }
         if ($sambal) {
             $modifiers[] = ['id' => $sambal->id, 'name' => $sambal->name, 'price' => (float) $sambal->price, 'type' => 'SAMBAL'];
         }
@@ -116,7 +181,7 @@ class ProductDetail extends Component
         }
         $modifiers = array_merge($modifiers, $extras);
 
-        $unitPrice = $this->variantPrice + $this->sambalPrice + $this->extrasTotal;
+        $unitPrice = $this->variantPrice + $this->nasiPrice + $this->sambalPrice + $this->extrasTotal;
 
         $cartItem = [
             'id' => uniqid(),
@@ -138,19 +203,23 @@ class ProductDetail extends Component
 
     public function render()
     {
-        $sambals = Sambal::where('is_active', true)->get();
-        $spiceLevels = SpiceLevel::where('is_active', true)->orderBy('level')->get();
-
+        $nasiGroup = $this->product->modifierGroups->firstWhere('type', 'NASI');
         $extraGroup = $this->product->modifierGroups->firstWhere('type', 'EXTRA');
+        $sambals = $this->product->sambals;
+        $spiceLevels = $this->currentSambal?->spiceLevels ?? collect();
 
         return view('livewire.customer.product-detail', [
+            'nasiGroup' => $nasiGroup,
+            'extraGroup' => $extraGroup,
             'sambals' => $sambals,
             'spiceLevels' => $spiceLevels,
-            'extraGroup' => $extraGroup,
+            'showNasi' => $this->showNasi,
+            'nasiIsRequired' => $this->nasiIsRequired,
+            'sambalIsRequired' => $this->sambalIsRequired,
             'variantPrice' => $this->variantPrice,
+            'nasiPrice' => $this->nasiPrice,
             'extrasTotal' => $this->extrasTotal,
             'totalPrice' => $this->totalPrice,
-            'requiresConfig' => $this->requiresConfig,
         ])->layout('components.layouts.customer', ['showNav' => false]);
     }
 }
