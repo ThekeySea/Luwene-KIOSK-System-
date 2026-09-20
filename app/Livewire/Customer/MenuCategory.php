@@ -3,6 +3,7 @@
 namespace App\Livewire\Customer;
 
 use App\Models\Category;
+use App\Models\Package;
 use Livewire\Component;
 
 class MenuCategory extends Component
@@ -30,6 +31,10 @@ class MenuCategory extends Component
             }])
             ->get();
 
+        $packageCount = Package::where('is_active', true)
+            ->where('is_published', true)
+            ->count();
+
         $orderMode = session('order_mode', 'TAKE_AWAY');
         $tableNumber = session('table_number');
 
@@ -37,6 +42,7 @@ class MenuCategory extends Component
             'categories' => $categories,
             'orderMode' => $orderMode,
             'tableNumber' => $tableNumber,
+            'sidebarPackageCount' => $packageCount,
         ])->layout('components.layouts.customer');
     }
 }

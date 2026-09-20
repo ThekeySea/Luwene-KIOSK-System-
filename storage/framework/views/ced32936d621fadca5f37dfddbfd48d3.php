@@ -16,14 +16,13 @@
             $navCartCount = session('cart') ? count(session('cart')) : 0;
             $isHome = request()->routeIs('home');
             $isMenu = request()->routeIs('customer.menu', 'customer.menu.category');
-            $isPackages = request()->routeIs('customer.packages', 'customer.package');
             $isCart = request()->routeIs('customer.cart');
             $isPromo = request()->routeIs('customer.promo');
             $isFaq = request()->routeIs('customer.faq');
         ?>
         <div class="h-28" aria-hidden="true"></div>
         <nav class="fixed bottom-0 left-0 right-0 z-30 px-4" style="padding-bottom: calc(env(safe-area-inset-bottom) + 0.75rem);">
-            <div class="max-w-lg mx-auto bg-white rounded-full border border-warm-100 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] px-2 py-2" style="display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); align-items: center;">
+            <div class="max-w-lg mx-auto bg-white rounded-full border border-warm-100 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] px-2 py-2" style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); align-items: center;">
                 <a href="<?php echo e(route('home')); ?>" class="flex flex-col items-center gap-0.5 py-1 transition <?php echo e($isHome ? 'text-primary' : 'text-warm-400 hover:text-warm-600'); ?>">
                     <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75" />
@@ -35,12 +34,6 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
                     </svg>
                     <span class="text-xs <?php echo e($isMenu ? 'font-bold' : 'font-medium'); ?>">Menu</span>
-                </a>
-                <a href="<?php echo e(route('customer.packages')); ?>" class="flex flex-col items-center gap-0.5 py-1 transition <?php echo e($isPackages ? 'text-primary' : 'text-warm-400 hover:text-warm-600'); ?>">
-                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 7.5l-9-5.25L3 7.5m18 0l-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9v9" />
-                    </svg>
-                    <span class="text-xs <?php echo e($isPackages ? 'font-bold' : 'font-medium'); ?>">Paket</span>
                 </a>
                 <a href="<?php echo e(route('customer.cart')); ?>" class="flex flex-col items-center" aria-label="Nampan">
                     <span class="relative -mt-8 w-14 h-14 rounded-full text-white flex items-center justify-center shadow-lg ring-4 ring-warm-50 transition <?php echo e($isCart ? 'bg-accent' : 'bg-primary hover:bg-primary-700'); ?>">

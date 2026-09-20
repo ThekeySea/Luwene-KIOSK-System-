@@ -23,13 +23,14 @@
         </header>
 
         <main class="flex-1 flex items-center justify-center px-4 overflow-hidden">
-            @if (session('error'))
+            <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if(session('error')): ?>
                 <div class="absolute top-4 left-1/2 -translate-x-1/2 p-2 bg-red-50 text-red-600 rounded-xl text-xs text-center z-10">
-                    {{ session('error') }}
-                </div>
-            @endif
+                    <?php echo e(session('error')); ?>
 
-            @if (!$orderMode)
+                </div>
+            <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
+
+            <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if(!$orderMode): ?>
                 <div class="text-center">
                     <h2 class="text-xl font-display font-bold text-dark mb-4">Mau Pesan?</h2>
 
@@ -65,7 +66,7 @@
                         </button>
                     </div>
                 </div>
-            @else
+            <?php else: ?>
                 <div class="w-full max-w-2xl">
                     <button wire:click="$set('orderMode', '')" class="mb-3 text-warm-400 hover:text-dark transition flex items-center gap-1 text-sm">
                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -77,31 +78,33 @@
                     <h2 class="text-lg font-display font-bold text-dark mb-3">Pilih Meja</h2>
 
                     <div class="grid grid-cols-3 sm:grid-cols-5 gap-2">
-                        @foreach ($tables as $table)
+                        <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::openLoop(); ?><?php endif; ?><?php $__currentLoopData = $tables; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $table): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::startLoopIteration(); ?><?php endif; ?>
                             <button
-                                wire:click="selectTable('{{ $table->id }}')"
-                                @disabled($table->status !== 'AVAILABLE')
+                                wire:click="selectTable('<?php echo e($table->id); ?>')"
+                                <?php if($table->status !== 'AVAILABLE'): echo 'disabled'; endif; ?>
                                 class="aspect-square rounded-xl border-2 p-2 flex flex-col items-center justify-center transition text-sm
-                                    @if($table->status === 'AVAILABLE')
+                                    <?php if($table->status === 'AVAILABLE'): ?>
                                         border-warm-200 bg-white hover:border-primary hover:bg-primary/5 cursor-pointer
-                                    @else
+                                    <?php else: ?>
                                         border-warm-100 bg-warm-50 opacity-50 cursor-not-allowed
-                                    @endif">
-                                <span class="text-lg font-bold {{ $table->status === 'AVAILABLE' ? 'text-dark' : 'text-warm-300' }}">
-                                    {{ $table->table_number }}
+                                    <?php endif; ?>">
+                                <span class="text-lg font-bold <?php echo e($table->status === 'AVAILABLE' ? 'text-dark' : 'text-warm-300'); ?>">
+                                    <?php echo e($table->table_number); ?>
+
                                 </span>
-                                <span class="text-[10px] {{ $table->status === 'AVAILABLE' ? 'text-warm-400' : 'text-warm-300' }}">
-                                    {{ $table->capacity }}pk
+                                <span class="text-[10px] <?php echo e($table->status === 'AVAILABLE' ? 'text-warm-400' : 'text-warm-300'); ?>">
+                                    <?php echo e($table->capacity); ?>pk
                                 </span>
-                                <span class="mt-0.5 w-1.5 h-1.5 rounded-full {{ $table->status === 'AVAILABLE' ? 'bg-green-400' : 'bg-red-400' }}"></span>
+                                <span class="mt-0.5 w-1.5 h-1.5 rounded-full <?php echo e($table->status === 'AVAILABLE' ? 'bg-green-400' : 'bg-red-400'); ?>"></span>
                             </button>
-                        @endforeach
+                        <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::endLoop(); ?><?php endif; ?><?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::closeLoop(); ?><?php endif; ?>
                     </div>
                 </div>
-            @endif
+            <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
         </main>
 
         <footer class="p-2 text-center text-[10px] text-warm-300 shrink-0">
-            &copy; {{ date('Y') }} LUWENE
+            &copy; <?php echo e(date('Y')); ?> LUWENE
         </footer>
     </div>
+<?php /**PATH C:\laragon\www\Luwene\resources\views/livewire/customer/entry-page.blade.php ENDPATH**/ ?>

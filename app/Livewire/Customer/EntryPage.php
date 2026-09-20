@@ -25,6 +25,11 @@ class EntryPage extends Component
         return redirect()->route('customer.menu');
     }
 
+    public function selectDelivery()
+    {
+        return redirect()->route('delivery.home');
+    }
+
     public function selectTable(string $tableId)
     {
         $table = RestaurantTable::findOrFail($tableId);

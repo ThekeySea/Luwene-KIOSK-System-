@@ -88,3 +88,10 @@ Route::middleware(['auth', 'role:ADMIN', 'restaurant.context'])->prefix('admin')
     Route::get('/reports', App\Livewire\Admin\Reports::class)->name('reports');
     Route::get('/settings', App\Livewire\Admin\Settings::class)->name('settings');
 });
+
+// Delivery - placeholder (akan dibangun di fase berikutnya)
+Route::prefix('delivery')->name('delivery.')->group(function () {
+    Route::get('/home', function () {
+        return redirect()->route('home')->with('error', 'Fitur Delivery segera hadir!');
+    })->name('home');
+});
