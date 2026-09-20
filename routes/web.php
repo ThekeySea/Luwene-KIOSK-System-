@@ -106,10 +106,29 @@ Route::prefix('delivery')->name('delivery.')->group(function () {
 Route::middleware(['auth', 'role:CUSTOMER'])->prefix('delivery')->name('delivery.')->group(function () {
     Route::get('/home', App\Livewire\Delivery\Home::class)->name('home');
     Route::get('/branch/{branchId}', App\Livewire\Delivery\BranchMenu::class)->name('branch');
-    Route::get('/orders', function () {
-        return redirect()->route('delivery.home');
-    })->name('orders');
-    Route::get('/profile', function () {
-        return redirect()->route('delivery.home');
-    })->name('profile');
+    Route::get('/product/{slug}', App\Livewire\Delivery\ProductDetail::class)->name('product');
+    Route::get('/cart', App\Livewire\Delivery\Cart::class)->name('cart');
+    Route::get('/checkout', App\Livewire\Delivery\Checkout::class)->name('checkout');
+    Route::get('/orders', App\Livewire\Delivery\Orders::class)->name('orders');
+    Route::get('/track/{orderId}', App\Livewire\Delivery\TrackOrder::class)->name('track');
+    Route::get('/order/{orderId}/receipt', function (string $orderId) {
+        $order = \App\Models\Order::with(['items.modifiers', 'payment', 'branch', 'table'])
+            ->where('user_id', auth()->id())
+            ->where('order_mode', 'DELIVERY')
+            ->findOrFail($orderId);
+
+        $barcode = \Milon\Barcode\Facades\DNS1DFacade::getBarcodePNG($order->order_number, 'C128', 2, 60);
+        $trackingUrl = route('delivery.track', $order->id);
+        $qrCode = \Milon\Barcode\Facades\DNS2DFacade::getBarcodePNG($trackingUrl, 'QR', 4, 4);
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('receipts.order-pdf', [
+            'order' => $order,
+            'barcode' => $barcode,
+            'qrCode' => $qrCode,
+        ]);
+        $pdf->setPaper([0, 0, 226.77, 700], 'portrait');
+
+        return $pdf->download('struk-delivery-'.$order->order_number.'.pdf');
+    })->name('receipt');
+    Route::get('/profile', App\Livewire\Delivery\Profile::class)->name('profile');
 });

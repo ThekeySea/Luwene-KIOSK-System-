@@ -43,6 +43,20 @@
             <p class="text-xs font-medium text-gray-400 uppercase tracking-wide">Total Produk</p>
             <p class="text-2xl font-display font-bold text-gray-900 mt-3">{{ number_format($totalProducts) }}</p>
         </div>
+
+        {{-- ── Delivery Bulanan ── --}}
+        <div class="bg-white rounded-xl border border-green-200 p-5">
+            <p class="text-xs font-medium text-green-500 uppercase tracking-wide">🛵 Delivery (Bulan Ini)</p>
+            <p class="text-2xl font-display font-bold text-gray-900 mt-3">{{ number_format($deliveryOrders) }}</p>
+            <p class="text-xs text-gray-400 mt-0.5">Rp {{ number_format($deliveryRevenue, 0, ',', '.') }}</p>
+        </div>
+
+        {{-- ── Delivery Aktif ── --}}
+        <div class="bg-white rounded-xl border border-gray-200 p-5">
+            <p class="text-xs font-medium text-gray-400 uppercase tracking-wide">Delivery Aktif</p>
+            <p class="text-2xl font-display font-bold text-gray-900 mt-3">{{ number_format($activeDelivery) }}</p>
+            <p class="text-xs text-gray-400 mt-0.5">Sedang diproses/dikirim</p>
+        </div>
     </div>
 
     {{-- ═══ SHORTCUT: Buka KIOSK ═══ --}}

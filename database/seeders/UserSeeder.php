@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Branch;
+use App\Models\DeliveryAddress;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -29,11 +30,29 @@ class UserSeeder extends Seeder
             'branch_id' => $branch->id,
         ]);
 
-        User::create([
+        $customer = User::create([
             'name' => 'Customer',
             'email' => 'customer@luwene.id',
             'password' => Hash::make('password'),
             'role' => 'CUSTOMER',
+        ]);
+
+        DeliveryAddress::create([
+            'user_id' => $customer->id,
+            'label' => 'Rumah',
+            'address' => 'Jl. Pemuda No. 123, RT 03/RW 05, Keputih, Sukolilo, Surabaya',
+            'latitude' => -7.2891,
+            'longitude' => 112.7960,
+            'is_default' => true,
+        ]);
+
+        DeliveryAddress::create([
+            'user_id' => $customer->id,
+            'label' => 'Kantor',
+            'address' => 'Jl. Raya Darmo No. 88, Wonokromo, Surabaya',
+            'latitude' => -7.2917,
+            'longitude' => 112.7356,
+            'is_default' => false,
         ]);
     }
 }

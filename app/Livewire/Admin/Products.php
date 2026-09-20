@@ -32,6 +32,7 @@ class Products extends Component
     public bool $is_active = true;
     public bool $is_available = true;
     public bool $is_featured = false;
+    public bool $is_published_delivery = false;
     public $photo = null;
 
     // Modifier assignments
@@ -61,6 +62,7 @@ class Products extends Component
         $this->is_active = true;
         $this->is_available = true;
         $this->is_featured = false;
+        $this->is_published_delivery = false;
         $this->resetErrorBag();
         $this->showModal = true;
     }
@@ -81,6 +83,7 @@ class Products extends Component
         $this->is_active = (bool) $product->is_active;
         $this->is_available = (bool) $product->is_available;
         $this->is_featured = (bool) $product->is_featured;
+        $this->is_published_delivery = (bool) $product->is_published_delivery;
         $this->photo = null;
 
         // Load assignments
@@ -123,6 +126,7 @@ class Products extends Component
             'is_active' => $this->is_active,
             'is_available' => $this->is_available,
             'is_featured' => $this->is_featured,
+            'is_published_delivery' => $this->is_published_delivery,
         ];
 
         if ($this->editingId) {

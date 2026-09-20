@@ -1,5 +1,5 @@
 <div>
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 mb-6">
     <input type="text" wire:model.live.debounce.300ms="search" class="px-4 py-2.5 bg-white border border-gray-200 rounded-lg text-sm text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-primary outline-none" placeholder="Cari nomor / nama..." />
     <select wire:model.live="statusFilter" class="px-4 py-2.5 bg-white border border-gray-200 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-primary outline-none">
         <option value="">Semua status</option>
@@ -13,6 +13,12 @@
             <option value="{{ $payment }}">{{ $payment }}</option>
         @endforeach
     </select>
+    <select wire:model.live="modeFilter" class="px-4 py-2.5 bg-white border border-gray-200 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-primary outline-none">
+        <option value="">Semua mode</option>
+        <option value="DINE_IN">Dine In</option>
+        <option value="TAKE_AWAY">Bawa Pulang</option>
+        <option value="DELIVERY">Delivery</option>
+    </select>
     <input type="date" wire:model.live="dateFilter" class="px-4 py-2.5 bg-white border border-gray-200 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-primary outline-none" />
 </div>
 
@@ -23,7 +29,7 @@
                 <button wire:click="toggleExpand('{{ $order->id }}')" class="w-full px-5 py-4 flex items-center justify-between gap-3 text-left hover:bg-gray-50 transition">
                     <div class="min-w-0">
                         <p class="text-sm font-bold text-gray-900">#{{ $order->order_number }} <span class="font-normal text-gray-400">&middot; {{ $order->customer_name ?? 'Tanpa nama' }}</span></p>
-                        <p class="text-xs text-gray-400 mt-0.5">{{ $order->created_at->format('d M Y, H:i') }} &middot; {{ $order->order_mode === 'DINE_IN' ? 'Dine In'.($order->table ? ' M'.$order->table->table_number : '') : 'Bawa Pulang' }}</p>
+                        <p class="text-xs text-gray-400 mt-0.5">{{ $order->created_at->format('d M Y, H:i') }} &middot; @if($order->order_mode === 'DINE_IN') Dine In{{ $order->table ? ' M'.$order->table->table_number : '' }} @elseif($order->order_mode === 'DELIVERY') 🛵 Delivery @else Bawa Pulang @endif</p>
                     </div>
                     <div class="text-right shrink-0">
                         <p class="text-sm font-semibold text-primary">Rp {{ number_format($order->total_amount, 0, ',', '.') }}</p>

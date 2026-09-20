@@ -31,6 +31,7 @@ class PackageSeeder extends Seeder
                 'type' => 'FIXED',
                 'is_active' => true,
                 'is_published' => true,
+                'is_published_delivery' => true,
             ]);
 
             PackageItem::create([
@@ -64,6 +65,7 @@ class PackageSeeder extends Seeder
                 'type' => 'MODULAR',
                 'is_active' => true,
                 'is_published' => true,
+                'is_published_delivery' => true,
             ]);
 
             // Section: Pilih Ayam (single)

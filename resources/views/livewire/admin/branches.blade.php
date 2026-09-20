@@ -69,6 +69,34 @@
                             <option value="INACTIVE">Nonaktif</option>
                         </select>
                     </div>
+
+                    <div class="border-t border-gray-100 pt-4 mt-2">
+                        <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Pengiriman</p>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-medium text-gray-600 mb-1">Latitude</label>
+                                <input type="text" wire:model="latitude" class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-primary outline-none" placeholder="-7.xxx" />
+                                @error('latitude') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-gray-600 mb-1">Longitude</label>
+                                <input type="text" wire:model="longitude" class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-primary outline-none" placeholder="112.xxx" />
+                                @error('longitude') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3 mt-3">
+                            <div>
+                                <label class="block text-xs font-medium text-gray-600 mb-1">Biaya Ongkir (Rp)</label>
+                                <input type="number" wire:model="delivery_fee" min="0" step="500" class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-primary outline-none" />
+                                @error('delivery_fee') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-gray-600 mb-1">Estimasi (menit)</label>
+                                <input type="number" wire:model="estimated_delivery_minutes" min="5" max="120" class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-primary outline-none" />
+                                @error('estimated_delivery_minutes') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="flex gap-2 mt-6">
                     <button type="button" wire:click="$set('showModal', false)" class="flex-1 py-2.5 bg-gray-100 text-gray-700 text-sm font-semibold rounded-lg hover:bg-gray-200 transition">Batal</button>

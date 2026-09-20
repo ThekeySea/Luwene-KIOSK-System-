@@ -28,6 +28,7 @@ class Packages extends Component
     public string $type = 'FIXED';
     public bool $is_active = true;
     public bool $is_published = false;
+    public bool $is_published_delivery = false;
     public $photo = null;
 
     // Fixed items
@@ -77,6 +78,7 @@ class Packages extends Component
         $this->price = '';
         $this->is_active = true;
         $this->is_published = false;
+        $this->is_published_delivery = false;
         $this->fixedItems = [['product_id' => '', 'quantity' => 1, 'role' => 'FIXED', 'price_override' => '']];
         $this->sections = [];
         $this->resetErrorBag();
@@ -95,6 +97,7 @@ class Packages extends Component
         $this->type = $pkg->type;
         $this->is_active = $pkg->is_active;
         $this->is_published = $pkg->is_published;
+        $this->is_published_delivery = $pkg->is_published_delivery;
         $this->photo = null;
 
         // Load fixed items (items without section)
@@ -203,6 +206,7 @@ class Packages extends Component
             'type' => $this->type,
             'is_active' => $this->is_active,
             'is_published' => $this->is_published,
+            'is_published_delivery' => $this->is_published_delivery,
         ];
 
         try {

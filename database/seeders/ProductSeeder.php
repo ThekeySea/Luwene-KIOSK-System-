@@ -105,6 +105,7 @@ class ProductSeeder extends Seeder
                 'is_featured' => $featured,
                 'is_active' => true,
                 'is_published' => true,
+                'is_published_delivery' => $isFood,
                 'sort_order' => $sortOrder++,
             ]);
 

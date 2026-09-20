@@ -48,6 +48,9 @@
                             @else
                                 <span class="text-xs px-2.5 py-1 rounded-full font-medium bg-yellow-100 text-yellow-700">Draft</span>
                             @endif
+                            @if($pkg->is_published_delivery)
+                                <span class="text-xs px-2.5 py-1 rounded-full font-medium bg-green-100 text-green-700 ml-1">🛵 Delivery</span>
+                            @endif
                             <button wire:click="toggleActive('{{ $pkg->id }}')" class="text-xs px-2.5 py-1 rounded-full font-medium transition {{ $pkg->is_active ? 'bg-green-100 text-green-700 hover:bg-green-200' : 'bg-red-100 text-red-700 hover:bg-red-200' }} ml-1">
                                 {{ $pkg->is_active ? 'Aktif' : 'Nonaktif' }}
                             </button>
@@ -128,6 +131,7 @@
                     <div class="flex flex-wrap gap-4 text-sm text-gray-700">
                         <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" wire:model="is_active" class="w-4 h-4 accent-primary rounded" /> Aktif</label>
                         <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" wire:model="is_published" class="w-4 h-4 accent-primary rounded" /> Published</label>
+                        <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" wire:model="is_published_delivery" class="w-4 h-4 accent-green-600 rounded" /> Tampilkan di Delivery</label>
                     </div>
 
                     {{-- Fixed Items --}}

@@ -14,6 +14,7 @@ class Transactions extends Component
     public string $statusFilter = '';
     public string $paymentFilter = '';
     public string $dateFilter = '';
+    public string $modeFilter = '';
     public ?string $expandedId = null;
 
     public function updatingSearch(): void
@@ -36,6 +37,11 @@ class Transactions extends Component
         $this->resetPage();
     }
 
+    public function updatingModeFilter(): void
+    {
+        $this->resetPage();
+    }
+
     public function toggleExpand(string $id): void
     {
         $this->expandedId = $this->expandedId === $id ? null : $id;
@@ -51,6 +57,7 @@ class Transactions extends Component
             ->when($this->statusFilter !== '', fn ($q) => $q->where('status', $this->statusFilter))
             ->when($this->paymentFilter !== '', fn ($q) => $q->where('payment_status', $this->paymentFilter))
             ->when($this->dateFilter !== '', fn ($q) => $q->whereDate('created_at', $this->dateFilter))
+            ->when($this->modeFilter !== '', fn ($q) => $q->where('order_mode', $this->modeFilter))
             ->latest()
             ->paginate(15);
 

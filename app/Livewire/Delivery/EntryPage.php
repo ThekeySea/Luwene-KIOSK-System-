@@ -6,12 +6,15 @@ use Livewire\Component;
 
 class EntryPage extends Component
 {
-    public function render()
+    public function mount(): void
     {
         if (auth()->check()) {
-            return redirect()->route('delivery.home');
+            $this->redirect(route('delivery.home'), navigate: true);
         }
+    }
 
+    public function render()
+    {
         return view('livewire.delivery.entry-page')->layout('components.layouts.delivery');
     }
 }

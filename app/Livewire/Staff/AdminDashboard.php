@@ -48,6 +48,18 @@ class AdminDashboard extends Component
         // ─── 4. Total produk ─────────────────────────────
         $totalProducts = Product::count();
 
+        // ─── 5. Delivery stats ──────────────────────────
+        $deliveryOrders = Order::where('order_mode', 'DELIVERY')
+            ->where('created_at', '>=', $monthStart)
+            ->count();
+        $deliveryRevenue = Order::where('order_mode', 'DELIVERY')
+            ->where('payment_status', 'PAID')
+            ->where('created_at', '>=', $monthStart)
+            ->sum('total_amount');
+        $activeDelivery = Order::where('order_mode', 'DELIVERY')
+            ->whereIn('status', ['PENDING', 'CONFIRMED', 'PREPARING', 'READY', 'OUT_FOR_DELIVERY'])
+            ->count();
+
         // ─── Trend percentages ───────────────────────────
         $revenueTrend = $this->calcTrend($revenueCurrent, $revenuePrevious);
         $ordersTrend = $this->calcTrend($ordersCurrent, $ordersPrevious);
@@ -67,6 +79,9 @@ class AdminDashboard extends Component
             'itemsCurrent' => $itemsCurrent,
             'itemsTrend' => $itemsTrend,
             'totalProducts' => $totalProducts,
+            'deliveryOrders' => $deliveryOrders,
+            'deliveryRevenue' => $deliveryRevenue,
+            'activeDelivery' => $activeDelivery,
             'recentOrders' => $recentOrders,
         ])->layout('components.layouts.admin', [
             'pageTitle' => 'Dashboard',
