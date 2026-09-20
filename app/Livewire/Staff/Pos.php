@@ -8,6 +8,43 @@ use Livewire\Component;
 
 class Pos extends Component
 {
+    public ?string $driverName = null;
+    public ?string $driverPhone = null;
+    public ?string $advanceOrderId = null;
+    public bool $showDriverModal = false;
+
+    public function openDriverModal(string $orderId): void
+    {
+        $this->advanceOrderId = $orderId;
+        $this->driverName = '';
+        $this->driverPhone = '';
+        $this->showDriverModal = true;
+    }
+
+    public function confirmAdvanceWithDriver(): void
+    {
+        $this->validate([
+            'driverName' => 'required|string|max:255',
+        ]);
+
+        $order = Order::where('branch_id', Auth::user()->branch_id)->find($this->advanceOrderId);
+
+        if (! $order || ! $order->canTransitionTo('OUT_FOR_DELIVERY')) {
+            $this->dispatch('toast', message: 'Status tidak dapat diubah.', type: 'error');
+            $this->showDriverModal = false;
+            return;
+        }
+
+        $order->update([
+            'status' => 'OUT_FOR_DELIVERY',
+            'driver_name' => $this->driverName,
+            'driver_phone' => $this->driverPhone,
+        ]);
+
+        $this->showDriverModal = false;
+        $this->dispatch('toast', message: "Pesanan #{$order->order_number} sedang dikirim oleh {$this->driverName}.", type: 'success');
+    }
+
     public function advance(string $orderId): void
     {
         $order = Order::where('branch_id', Auth::user()->branch_id)->find($orderId);
@@ -22,8 +59,14 @@ class Pos extends Component
             'CONFIRMED' => 'PREPARING',
             'PREPARING' => 'READY',
             'READY' => 'COMPLETED',
+            'OUT_FOR_DELIVERY' => 'DELIVERED',
             default => null,
         };
+
+        if ($order->status === 'READY' && $order->order_mode === 'DELIVERY') {
+            $this->openDriverModal($orderId);
+            return;
+        }
 
         if (! $next || ! $order->canTransitionTo($next)) {
             $this->dispatch('toast', message: 'Status tidak dapat diubah.', type: 'error');
@@ -32,7 +75,7 @@ class Pos extends Component
 
         $order->update(array_merge(
             ['status' => $next],
-            $next === 'COMPLETED' ? ['completed_at' => now()] : [],
+            in_array($next, ['COMPLETED', 'DELIVERED']) ? ['completed_at' => now()] : [],
         ));
 
         $this->dispatch('toast', message: "Pesanan #{$order->order_number} menjadi {$next}.", type: 'success');
@@ -42,8 +85,7 @@ class Pos extends Component
     {
         $pendingOrders = Order::with(['items', 'table'])
             ->where('branch_id', Auth::user()->branch_id)
-            ->where('status', '!=', 'COMPLETED')
-            ->where('status', '!=', 'CANCELLED')
+            ->whereNotIn('status', ['COMPLETED', 'CANCELLED', 'DELIVERED'])
             ->latest()
             ->get();
 

@@ -10,7 +10,7 @@ class Package extends Model
 {
     use HasUuids;
 
-    protected $fillable = ['name', 'code', 'description', 'price', 'image', 'is_active', 'is_published', 'type'];
+    protected $fillable = ['name', 'code', 'description', 'price', 'image', 'is_active', 'is_published', 'is_published_delivery', 'type'];
 
     protected function casts(): array
     {
@@ -18,6 +18,7 @@ class Package extends Model
             'price' => 'decimal:2',
             'is_active' => 'boolean',
             'is_published' => 'boolean',
+            'is_published_delivery' => 'boolean',
         ];
     }
 

@@ -9,7 +9,17 @@ class Branch extends Model
 {
     use HasUuids;
 
-    protected $fillable = ['name', 'address', 'status'];
+    protected $fillable = ['name', 'address', 'status', 'latitude', 'longitude', 'delivery_fee', 'estimated_delivery_minutes'];
+
+    protected function casts(): array
+    {
+        return [
+            'latitude' => 'decimal:7',
+            'longitude' => 'decimal:7',
+            'delivery_fee' => 'decimal:2',
+            'estimated_delivery_minutes' => 'integer',
+        ];
+    }
 
     public function users()
     {

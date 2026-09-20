@@ -37,11 +37,19 @@
                                 <p class="text-xs text-gray-400">
                                     @if($order->order_mode === 'DINE_IN')
                                         Dine In{{ $order->table ? ' · Meja '.$order->table->table_number : '' }}
+                                    @elseif($order->order_mode === 'DELIVERY')
+                                        🚗 Delivery
+                                        @if($order->driver_name)
+                                            · Driver: {{ $order->driver_name }}
+                                        @endif
                                     @else
                                         Bawa Pulang
                                     @endif
                                     &middot; {{ $order->created_at->format('H:i') }}
                                 </p>
+                                @if($order->order_mode === 'DELIVERY' && $order->delivery_address)
+                                    <p class="text-xs text-gray-400 mt-0.5">📍 {{ Str::limit($order->delivery_address, 60) }}</p>
+                                @endif
                             </div>
                             <div class="text-right">
                                 <p class="text-sm font-semibold text-primary">Rp {{ number_format($order->total_amount, 0, ',', '.') }}</p>
@@ -49,9 +57,12 @@
                                     @if($order->status === 'PENDING') bg-yellow-100 text-yellow-700
                                     @elseif($order->status === 'CONFIRMED') bg-blue-100 text-blue-700
                                     @elseif($order->status === 'PREPARING') bg-orange-100 text-orange-700
+                                    @elseif($order->status === 'OUT_FOR_DELIVERY') bg-purple-100 text-purple-700
                                     @else bg-green-100 text-green-700
                                     @endif">
-                                    {{ $order->status }}
+                                    @if($order->status === 'OUT_FOR_DELIVERY') Sedang Dikirim
+                                    @else {{ $order->status }}
+                                    @endif
                                 </span>
                             </div>
                         </div>
@@ -60,7 +71,8 @@
                                 'PENDING' => 'Konfirmasi',
                                 'CONFIRMED' => 'Mulai Siapkan',
                                 'PREPARING' => 'Tandai Siap',
-                                'READY' => 'Selesaikan',
+                                'READY' => $order->order_mode === 'DELIVERY' ? 'Kirim' : 'Selesaikan',
+                                'OUT_FOR_DELIVERY' => 'Terkirim',
                                 default => null,
                             })
                             @if($nextLabel)
@@ -69,7 +81,11 @@
                                     wire:loading.attr="disabled"
                                     wire:target="advance('{{ $order->id }}')"
                                     class="px-4 py-2 text-white text-xs font-semibold rounded-lg transition disabled:opacity-50
-                                        {{ $order->status === 'PENDING' ? 'bg-blue-500 hover:bg-blue-600' : ($order->status === 'CONFIRMED' ? 'bg-orange-500 hover:bg-orange-600' : 'bg-green-500 hover:bg-green-600') }}">
+                                        @if($order->status === 'PENDING') bg-blue-500 hover:bg-blue-600
+                                        @elseif($order->status === 'CONFIRMED') bg-orange-500 hover:bg-orange-600
+                                        @elseif($order->status === 'OUT_FOR_DELIVERY') bg-purple-500 hover:bg-purple-600
+                                        @else bg-green-500 hover:bg-green-600
+                                        @endif">
                                     <span wire:loading.remove wire:target="advance('{{ $order->id }}')">{{ $nextLabel }}</span>
                                     <span wire:loading wire:target="advance('{{ $order->id }}')">Memproses...</span>
                                 </button>
@@ -82,4 +98,33 @@
             </div>
         </div>
     </main>
+
+    @if($showDriverModal)
+        <div class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" wire:click.self="$set('showDriverModal', false)">
+            <div class="bg-white rounded-2xl p-6 w-full max-w-sm shadow-xl">
+                <h3 class="text-lg font-bold text-gray-900 mb-1">Data Driver</h3>
+                <p class="text-sm text-gray-500 mb-4">Isi data driver untuk pengiriman delivery.</p>
+
+                <div class="space-y-3">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Nama Driver *</label>
+                        <input type="text" wire:model="driverName" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:border-primary" placeholder="Nama driver">
+                        @error('driverName') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">No. HP Driver</label>
+                        <input type="text" wire:model="driverPhone" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:border-primary" placeholder="08xxx">
+                    </div>
+                </div>
+
+                <div class="flex gap-2 mt-5">
+                    <button wire:click="$set('showDriverModal', false)" class="flex-1 px-4 py-2.5 border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 transition">Batal</button>
+                    <button wire:click="confirmAdvanceWithDriver" wire:loading.attr="disabled" class="flex-1 px-4 py-2.5 bg-purple-500 text-white text-sm font-semibold rounded-lg hover:bg-purple-600 transition disabled:opacity-50">
+                        <span wire:loading.remove>Kirim</span>
+                        <span wire:loading>Memproses...</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    @endif
 </div>

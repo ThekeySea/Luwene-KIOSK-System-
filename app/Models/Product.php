@@ -13,7 +13,7 @@ class Product extends Model
 
     protected $fillable = [
         'category_id', 'name', 'slug', 'description', 'image',
-        'base_price', 'is_active', 'is_available', 'is_featured', 'is_published', 'sort_order',
+        'base_price', 'is_active', 'is_available', 'is_featured', 'is_published', 'is_published_delivery', 'sort_order',
     ];
 
     protected function casts(): array
@@ -24,6 +24,7 @@ class Product extends Model
             'is_available' => 'boolean',
             'is_featured' => 'boolean',
             'is_published' => 'boolean',
+            'is_published_delivery' => 'boolean',
         ];
     }
 

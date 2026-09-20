@@ -15,6 +15,8 @@ class Order extends Model
         'client_order_id', 'order_number', 'order_mode', 'status', 'payment_status',
         'subtotal', 'tax_amount', 'discount_amount', 'total_amount',
         'notes', 'cancelled_at', 'completed_at',
+        'delivery_address', 'delivery_fee', 'delivery_notes', 'delivery_estimated_at',
+        'driver_name', 'driver_phone',
     ];
 
     protected function casts(): array
@@ -24,8 +26,10 @@ class Order extends Model
             'tax_amount' => 'decimal:2',
             'discount_amount' => 'decimal:2',
             'total_amount' => 'decimal:2',
+            'delivery_fee' => 'decimal:2',
             'cancelled_at' => 'datetime',
             'completed_at' => 'datetime',
+            'delivery_estimated_at' => 'datetime',
         ];
     }
 
@@ -65,7 +69,8 @@ class Order extends Model
             'PENDING' => in_array($newStatus, ['CONFIRMED', 'CANCELLED']),
             'CONFIRMED' => $newStatus === 'PREPARING',
             'PREPARING' => $newStatus === 'READY',
-            'READY' => $newStatus === 'COMPLETED',
+            'READY' => $this->order_mode === 'DELIVERY' ? $newStatus === 'OUT_FOR_DELIVERY' : $newStatus === 'COMPLETED',
+            'OUT_FOR_DELIVERY' => $newStatus === 'DELIVERED',
             default => false,
         };
     }
