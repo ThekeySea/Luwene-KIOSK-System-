@@ -30,6 +30,8 @@ Route::prefix('customer')->name('customer.')->group(function () {
     Route::get('/menu', App\Livewire\Customer\Menu::class)->name('menu');
     Route::get('/menu/kategori/{categorySlug}', App\Livewire\Customer\MenuCategory::class)->name('menu.category');
     Route::get('/menu/{slug}', App\Livewire\Customer\ProductDetail::class)->name('product');
+    Route::get('/packages', App\Livewire\Customer\Packages::class)->name('packages');
+    Route::get('/packages/{code}', App\Livewire\Customer\PackageDetail::class)->name('package');
     Route::get('/cart', App\Livewire\Customer\Cart::class)->name('cart');
     Route::get('/info', App\Livewire\Customer\CustomerInfo::class)->name('info');
     Route::get('/checkout', App\Livewire\Customer\Checkout::class)->name('checkout');
@@ -75,6 +77,7 @@ Route::middleware(['auth', 'role:CASHIER,ADMIN', 'restaurant.context'])->prefix(
 Route::middleware(['auth', 'role:ADMIN', 'restaurant.context'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', App\Livewire\Staff\AdminDashboard::class)->name('dashboard');
     Route::get('/products', App\Livewire\Admin\Products::class)->name('products');
+    Route::get('/packages', App\Livewire\Admin\Packages::class)->name('packages');
     Route::get('/categories', App\Livewire\Admin\Categories::class)->name('categories');
     Route::get('/sambals', App\Livewire\Admin\Sambals::class)->name('sambals');
     Route::get('/addons', App\Livewire\Admin\ModifierGroups::class)->name('modifier-groups');

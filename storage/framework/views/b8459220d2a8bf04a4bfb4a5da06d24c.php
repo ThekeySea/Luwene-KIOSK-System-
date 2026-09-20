@@ -46,6 +46,20 @@
     </div>
 
     
+    <div class="mb-6">
+        <a href="<?php echo e(route('home')); ?>" target="_blank" class="flex items-center gap-4 bg-gradient-to-r from-primary to-accent rounded-xl p-5 text-white hover:shadow-lg hover:scale-[1.01] transition-all duration-200">
+            <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center shrink-0">
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>
+            </div>
+            <div class="min-w-0">
+                <p class="text-sm font-bold">Buka Kiosk Pelanggan</p>
+                <p class="text-xs text-white/70">Lihat tampilan menu yang dilihat pelanggan</p>
+            </div>
+            <svg class="w-5 h-5 ml-auto shrink-0 opacity-70" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+        </a>
+    </div>
+
+    
     <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
         <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
             <h2 class="font-display font-bold text-gray-900">Pesanan Terbaru</h2>
