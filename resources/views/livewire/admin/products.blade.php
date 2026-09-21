@@ -29,7 +29,7 @@
                             <div class="flex items-center gap-3">
                                 <div class="w-11 h-11 rounded-lg bg-gray-100 overflow-hidden flex items-center justify-center shrink-0">
                                     @if($product->image)
-                                        <img src="{{ asset('storage/'.$product->image) }}" alt="{{ $product->name }}" class="w-full h-full object-cover">
+                                        <img src="{{ str_starts_with($product->image ?? '', 'http') ? $product->image : asset('storage/'.$product->image) }}" alt="{{ $product->name }}" class="w-full h-full object-cover">
                                     @else
                                         <span class="text-lg">&#127860;</span>
                                     @endif

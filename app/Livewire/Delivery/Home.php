@@ -27,7 +27,6 @@ class Home extends Component
         $productsQuery = \App\Models\Product::where('is_active', true)
             ->where('is_published', true)
             ->where('is_published_delivery', true)
-            ->where('is_available', true)
             ->with('variants');
 
         if ($this->search !== '') {

@@ -65,12 +65,11 @@ class EntryPage extends Component
 
         $popularProducts = Product::where('is_active', true)
             ->where('is_published', true)
-            ->where('is_featured', true)
             ->withCount(['orderItems as orders_count' => function ($q) {
                 $q->whereHas('order', fn ($oq) => $oq->where('status', 'COMPLETED'));
             }])
             ->orderBy('orders_count', 'desc')
-            ->limit(5)
+            ->limit(3)
             ->get();
 
         return view('livewire.customer.entry-page', [

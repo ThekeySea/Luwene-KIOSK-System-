@@ -22,16 +22,15 @@ class Login extends Component
         if (Auth::attempt(['email' => $this->email, 'password' => $this->password])) {
             $user = Auth::user();
 
-            if ($user->role !== 'CUSTOMER') {
-                Auth::logout();
-                $this->addError('email', 'Akun ini bukan akun pelanggan.');
-                return;
-            }
-
             $user->update(['last_login_at' => now()]);
             session()->regenerate();
 
-            return redirect()->route('delivery.home');
+            return match ($user->role) {
+                'ADMIN' => redirect()->route('admin.dashboard'),
+                'CASHIER' => redirect()->route('cashier.dashboard'),
+                'CUSTOMER' => redirect()->route('delivery.home'),
+                default => redirect()->route('delivery.entry'),
+            };
         }
 
         $this->addError('email', 'Email atau password salah.');

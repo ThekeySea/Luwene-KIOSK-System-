@@ -14,7 +14,7 @@ class AuthFlowTest extends TestCase
     public function test_login_page_renders(): void
     {
         $this->get('/login')
-            ->assertStatus(200);
+            ->assertRedirect(route('delivery.login'));
     }
 
     public function test_login_with_valid_credentials(): void

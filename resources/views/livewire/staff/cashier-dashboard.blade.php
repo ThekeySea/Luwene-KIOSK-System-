@@ -3,13 +3,13 @@
         <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
             <div>
                 <h1 class="text-xl font-display font-bold text-gray-900">LUWENE <span class="text-primary">POS</span></h1>
-                <p class="text-xs text-gray-400">Kasir</p>
+                <p class="text-xs text-primary font-semibold bg-primary/10 inline-block px-2 py-0.5 rounded-full mt-0.5">Kasir</p>
             </div>
             <div class="flex items-center gap-3">
                 <span class="text-sm text-gray-500">{{ Auth::user()->name }}</span>
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
-                    <button type="submit" class="text-sm text-gray-400 hover:text-red-500 transition">Keluar</button>
+                    <button type="submit" class="text-sm font-medium text-gray-500 bg-gray-100 hover:bg-red-50 hover:text-red-600 px-3 py-1.5 rounded-lg transition">Keluar</button>
                 </form>
             </div>
         </div>
@@ -31,7 +31,7 @@
             </div>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
             <a href="{{ route('cashier.pos') }}" class="block bg-primary rounded-xl p-6 text-center hover:bg-primary-700 transition">
                 <svg class="w-12 h-12 text-white mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
@@ -46,6 +46,35 @@
                 <h2 class="text-xl font-display font-bold text-gray-900">Scan Barcode</h2>
                 <p class="text-sm text-gray-400 mt-1">Konfirmasi pesanan instan</p>
             </a>
+        </div>
+
+        <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+            <div class="px-5 py-4 border-b border-gray-100">
+                <h2 class="font-display font-bold text-gray-900">Status Meja</h2>
+            </div>
+            <div class="p-5 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+                @foreach($tables as $table)
+                    <div class="relative border rounded-xl p-4 text-center transition
+                        {{ $table->status === 'AVAILABLE' ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50' }}">
+                        <p class="text-2xl font-display font-bold {{ $table->status === 'AVAILABLE' ? 'text-green-700' : 'text-red-600' }}">{{ $table->table_number }}</p>
+                        <p class="text-xs {{ $table->status === 'AVAILABLE' ? 'text-green-500' : 'text-red-400' }} mt-0.5">{{ $table->capacity }}pk</p>
+                        <span class="inline-block mt-2 text-[10px] font-semibold px-2 py-0.5 rounded-full
+                            {{ $table->status === 'AVAILABLE' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600' }}">
+                            {{ $table->status === 'AVAILABLE' ? 'Kosong' : 'Terpakai' }}
+                        </span>
+                        @if($table->status === 'OCCUPIED')
+                            <button
+                                wire:click="releaseTableById('{{ $table->id }}')"
+                                wire:loading.attr="disabled"
+                                wire:target="releaseTableById('{{ $table->id }}')"
+                                class="mt-2 w-full text-[11px] font-semibold text-red-600 bg-white border border-red-200 rounded-lg py-1.5 hover:bg-red-100 transition disabled:opacity-50">
+                                <span wire:loading.remove wire:target="releaseTableById('{{ $table->id }}')">Lepas</span>
+                                <span wire:loading wire:target="releaseTableById('{{ $table->id }}')">...</span>
+                            </button>
+                        @endif
+                    </div>
+                @endforeach
+            </div>
         </div>
     </main>
 </div>

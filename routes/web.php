@@ -5,7 +5,9 @@ use Illuminate\Support\Facades\Auth;
 
 Route::get('/', App\Livewire\Customer\EntryPage::class)->name('home');
 
-Route::get('/login', App\Livewire\Auth\Login::class)->name('login');
+Route::get('/login', function () {
+    return redirect()->route('delivery.login');
+})->name('login');
 Route::get('/register', App\Livewire\Auth\Register::class)->name('register');
 
 Route::post('/logout', function () {

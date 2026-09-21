@@ -40,7 +40,7 @@
                 <h1 class="text-xl font-display font-bold tracking-wide">LUWENE</h1>
             </div>
             <div class="text-right">
-                <p class="text-sm font-bold">Halo, Pecinta Ayam!</p>
+                <p class="text-sm font-bold">Luwene, Ahli Pengenyang Perut</p>
                 <p class="text-[11px] text-white/70">Selamat Datang di LUWENE</p>
             </div>
         </div>
@@ -143,7 +143,7 @@
                             <a href="<?php echo e(route('customer.product', $product->slug)); ?>" class="flex flex-col items-center gap-3 group">
                                 <div class="w-full aspect-square rounded-2xl overflow-hidden shadow-sm group-hover:shadow-md transition">
                                     <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($product->image): ?>
-                                        <img src="<?php echo e(asset('storage/'.$product->image)); ?>" alt="<?php echo e($product->name); ?>" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                                        <img src="<?php echo e(str_starts_with($product->image, 'http') ? $product->image : asset('storage/'.$product->image)); ?>" alt="<?php echo e($product->name); ?>" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
                                     <?php else: ?>
                                         <div class="w-full h-full bg-warm-100 flex items-center justify-center">
                                             <span class="text-5xl"><?php echo e($icon); ?></span>

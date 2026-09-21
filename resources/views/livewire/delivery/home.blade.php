@@ -1,8 +1,16 @@
 <div class="min-h-dvh bg-warm-50 pb-24">
+    <form id="delivery-logout-form" method="POST" action="{{ route('delivery.logout') }}" class="hidden">
+        @csrf
+    </form>
     <header class="bg-white shadow-sm sticky top-0 z-10">
         <div class="max-w-lg mx-auto px-4 py-3">
             <div class="flex items-center justify-between mb-3">
                 <div class="flex items-center gap-2">
+                    <button type="button" onclick="document.getElementById('delivery-logout-form').submit()" class="w-9 h-9 flex items-center justify-center rounded-full hover:bg-warm-100 text-warm-500 hover:text-dark transition shrink-0">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                        </svg>
+                    </button>
                     <span class="text-xl">🛵</span>
                     <div>
                         <p class="text-sm font-bold text-dark">LUWENE Benowo</p>
@@ -86,7 +94,7 @@
                     <a href="{{ route('delivery.product', $product->slug) }}" class="bg-white rounded-2xl shadow-sm border border-warm-100 overflow-hidden hover:shadow-md transition flex flex-col">
                         <div class="aspect-[4/3] bg-warm-100 flex items-center justify-center relative">
                             @if($product->image)
-                                <img src="{{ asset('storage/'.$product->image) }}" alt="{{ $product->name }}" class="w-full h-full object-cover">
+                                <img src="{{ str_starts_with($product->image, 'http') ? $product->image : asset('storage/'.$product->image) }}" alt="{{ $product->name }}" class="w-full h-full object-cover">
                             @else
                                 <span class="text-4xl">{{ $icon }}</span>
                             @endif

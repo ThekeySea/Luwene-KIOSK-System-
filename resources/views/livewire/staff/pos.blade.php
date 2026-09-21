@@ -90,6 +90,13 @@
                                     <span wire:loading wire:target="advance('{{ $order->id }}')">Memproses...</span>
                                 </button>
                             @endif
+                            @if($order->status === 'PENDING')
+                                <button
+                                    wire:click="openCancelModal('{{ $order->id }}')"
+                                    class="px-4 py-2 text-red-600 text-xs font-semibold rounded-lg border border-red-200 hover:bg-red-50 transition">
+                                    Batalkan
+                                </button>
+                            @endif
                         </div>
                     </div>
                 @empty
@@ -121,6 +128,22 @@
                     <button wire:click="$set('showDriverModal', false)" class="flex-1 px-4 py-2.5 border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 transition">Batal</button>
                     <button wire:click="confirmAdvanceWithDriver" wire:loading.attr="disabled" class="flex-1 px-4 py-2.5 bg-purple-500 text-white text-sm font-semibold rounded-lg hover:bg-purple-600 transition disabled:opacity-50">
                         <span wire:loading.remove>Kirim</span>
+                        <span wire:loading>Memproses...</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    @endif
+
+    @if($showCancelModal)
+        <div class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" wire:click.self="$set('showCancelModal', false)">
+            <div class="bg-white rounded-2xl p-6 w-full max-w-sm shadow-xl">
+                <h3 class="text-lg font-bold text-gray-900 mb-1">Batalkan Pesanan?</h3>
+                <p class="text-sm text-gray-500 mb-5">Pesanan akan dibatalkan dan meja yang terkait akan dikembalikan ke status kosong.</p>
+                <div class="flex gap-2">
+                    <button wire:click="$set('showCancelModal', false)" class="flex-1 px-4 py-2.5 border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 transition">Kembali</button>
+                    <button wire:click="confirmCancel" wire:loading.attr="disabled" class="flex-1 px-4 py-2.5 bg-red-500 text-white text-sm font-semibold rounded-lg hover:bg-red-600 transition disabled:opacity-50">
+                        <span wire:loading.remove>Ya, Batalkan</span>
                         <span wire:loading>Memproses...</span>
                     </button>
                 </div>

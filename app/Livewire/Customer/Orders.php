@@ -12,6 +12,7 @@ class Orders extends Component
     {
         $orders = Order::with('items')
             ->where('user_id', Auth::id())
+            ->whereIn('order_mode', ['DINE_IN', 'TAKE_AWAY'])
             ->latest()
             ->get();
 

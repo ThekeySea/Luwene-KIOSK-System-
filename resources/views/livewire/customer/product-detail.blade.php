@@ -14,7 +14,7 @@
     <div class="max-w-3xl mx-auto pb-32">
         <div class="aspect-[4/3] bg-warm-100">
             @if ($product->image)
-                <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" class="w-full h-full object-cover">
+                <img src="{{ str_starts_with($product->image ?? '', 'http') ? $product->image : asset('storage/' . $product->image) }}" alt="{{ $product->name }}" class="w-full h-full object-cover">
             @else
                 <div class="w-full h-full flex items-center justify-center">
                     <svg class="w-20 h-20 text-warm-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">

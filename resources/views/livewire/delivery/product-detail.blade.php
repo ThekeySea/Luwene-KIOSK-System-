@@ -13,7 +13,7 @@
     <div class="max-w-lg mx-auto">
         <div class="aspect-[4/3] bg-warm-100">
             @if ($product->image)
-                <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" class="w-full h-full object-cover">
+                <img src="{{ str_starts_with($product->image ?? '', 'http') ? $product->image : asset('storage/' . $product->image) }}" alt="{{ $product->name }}" class="w-full h-full object-cover">
             @else
                 <div class="w-full h-full flex items-center justify-center">
                     <span class="text-6xl">🍽️</span>

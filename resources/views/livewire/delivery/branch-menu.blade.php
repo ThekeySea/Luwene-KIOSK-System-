@@ -56,7 +56,7 @@
                     <a href="{{ route('delivery.product', $product->slug) }}" class="bg-white rounded-2xl shadow-sm border border-warm-100 overflow-hidden hover:shadow-md transition flex flex-col">
                         <div class="aspect-[4/3] bg-warm-100 flex items-center justify-center relative">
                             @if($product->image)
-                                <img src="{{ asset('storage/'.$product->image) }}" alt="{{ $product->name }}" class="w-full h-full object-cover">
+                                <img src="{{ str_starts_with($product->image, 'http') ? $product->image : asset('storage/'.$product->image) }}" alt="{{ $product->name }}" class="w-full h-full object-cover">
                             @else
                                 <span class="text-4xl">{{ $icon }}</span>
                             @endif
