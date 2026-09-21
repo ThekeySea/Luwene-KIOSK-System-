@@ -192,7 +192,7 @@ class ProductDetail extends Component
         $cart[] = $cartItem;
         session()->put('delivery_cart', $cart);
 
-        return redirect()->route('delivery.branch', session('delivery_branch_id', ''));
+        return redirect()->route('delivery.home');
     }
 
     public function render()
@@ -214,7 +214,6 @@ class ProductDetail extends Component
             'nasiPrice' => $this->nasiPrice,
             'extrasTotal' => $this->extrasTotal,
             'totalPrice' => $this->totalPrice,
-            'branchId' => session('delivery_branch_id'),
         ])->layout('components.layouts.delivery');
     }
 }

@@ -15,6 +15,8 @@ class SettingSeeder extends Seeder
             'receipt_footer' => 'Terima kasih telah memesan di LUWENE!',
             'opening_hours' => '08:00',
             'closing_hours' => '22:00',
+            'delivery_fee' => '5000',
+            'estimated_delivery_minutes' => '30',
         ];
 
         foreach ($defaults as $key => $value) {

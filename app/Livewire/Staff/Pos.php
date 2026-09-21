@@ -3,7 +3,6 @@
 namespace App\Livewire\Staff;
 
 use App\Models\Order;
-use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
 class Pos extends Component
@@ -27,7 +26,7 @@ class Pos extends Component
             'driverName' => 'required|string|max:255',
         ]);
 
-        $order = Order::where('branch_id', Auth::user()->branch_id)->find($this->advanceOrderId);
+        $order = Order::find($this->advanceOrderId);
 
         if (! $order || ! $order->canTransitionTo('OUT_FOR_DELIVERY')) {
             $this->dispatch('toast', message: 'Status tidak dapat diubah.', type: 'error');
@@ -47,7 +46,7 @@ class Pos extends Component
 
     public function advance(string $orderId): void
     {
-        $order = Order::where('branch_id', Auth::user()->branch_id)->find($orderId);
+        $order = Order::find($orderId);
 
         if (! $order) {
             $this->dispatch('toast', message: 'Pesanan tidak ditemukan.', type: 'error');
@@ -84,7 +83,6 @@ class Pos extends Component
     public function render()
     {
         $pendingOrders = Order::with(['items', 'table'])
-            ->where('branch_id', Auth::user()->branch_id)
             ->whereNotIn('status', ['COMPLETED', 'CANCELLED', 'DELIVERED'])
             ->latest()
             ->get();

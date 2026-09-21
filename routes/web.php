@@ -82,7 +82,7 @@ Route::middleware(['auth', 'role:ADMIN', 'restaurant.context'])->prefix('admin')
     Route::get('/sambals', App\Livewire\Admin\Sambals::class)->name('sambals');
     Route::get('/addons', App\Livewire\Admin\ModifierGroups::class)->name('modifier-groups');
     Route::get('/promos', App\Livewire\Admin\Promos::class)->name('promos');
-    Route::get('/branches', App\Livewire\Admin\Branches::class)->name('branches');
+    Route::get('/restaurant-info', App\Livewire\Admin\Branches::class)->name('branches');
     Route::get('/staff', App\Livewire\Admin\Staff::class)->name('staff');
     Route::get('/transactions', App\Livewire\Admin\Transactions::class)->name('transactions');
     Route::get('/reports', App\Livewire\Admin\Reports::class)->name('reports');
@@ -105,7 +105,6 @@ Route::prefix('delivery')->name('delivery.')->group(function () {
 // Delivery - auth required
 Route::middleware(['auth', 'role:CUSTOMER'])->prefix('delivery')->name('delivery.')->group(function () {
     Route::get('/home', App\Livewire\Delivery\Home::class)->name('home');
-    Route::get('/branch/{branchId}', App\Livewire\Delivery\BranchMenu::class)->name('branch');
     Route::get('/product/{slug}', App\Livewire\Delivery\ProductDetail::class)->name('product');
     Route::get('/cart', App\Livewire\Delivery\Cart::class)->name('cart');
     Route::get('/checkout', App\Livewire\Delivery\Checkout::class)->name('checkout');

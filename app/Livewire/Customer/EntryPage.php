@@ -2,6 +2,8 @@
 
 namespace App\Livewire\Customer;
 
+use App\Models\OrderItem;
+use App\Models\Product;
 use App\Models\RestaurantTable;
 use App\Models\DiningSession;
 use Illuminate\Support\Str;
@@ -61,8 +63,19 @@ class EntryPage extends Component
     {
         $tables = RestaurantTable::orderBy('table_number')->get();
 
+        $popularProducts = Product::where('is_active', true)
+            ->where('is_published', true)
+            ->where('is_featured', true)
+            ->withCount(['orderItems as orders_count' => function ($q) {
+                $q->whereHas('order', fn ($oq) => $oq->where('status', 'COMPLETED'));
+            }])
+            ->orderBy('orders_count', 'desc')
+            ->limit(5)
+            ->get();
+
         return view('livewire.customer.entry-page', [
             'tables' => $tables,
+            'popularProducts' => $popularProducts,
         ])->layout('components.layouts.customer', ['showNav' => false]);
     }
 }

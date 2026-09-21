@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\Branch;
 use App\Models\DeliveryAddress;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -12,14 +11,11 @@ class UserSeeder extends Seeder
 {
     public function run(): void
     {
-        $branch = Branch::first();
-
         User::create([
             'name' => 'Admin',
             'email' => 'admin@luwene.id',
             'password' => Hash::make('password'),
             'role' => 'ADMIN',
-            'branch_id' => $branch->id,
         ]);
 
         User::create([
@@ -27,7 +23,6 @@ class UserSeeder extends Seeder
             'email' => 'kasir@luwene.id',
             'password' => Hash::make('password'),
             'role' => 'CASHIER',
-            'branch_id' => $branch->id,
         ]);
 
         $customer = User::create([

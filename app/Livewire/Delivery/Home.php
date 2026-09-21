@@ -2,56 +2,50 @@
 
 namespace App\Livewire\Delivery;
 
-use App\Models\Branch;
-use App\Services\DistanceService;
+use App\Models\Category;
+use App\Models\Setting;
 use Livewire\Component;
 
 class Home extends Component
 {
-    public float $userLat = -7.2575;
-    public float $userLng = 112.7522;
     public string $search = '';
-
-    protected $listeners = ['setLocation' => 'setLocation'];
-
-    public function setLocation(float $lat, float $lng): void
-    {
-        $this->userLat = $lat;
-        $this->userLng = $lng;
-        session()->put('delivery_lat', $lat);
-        session()->put('delivery_lng', $lng);
-    }
 
     public function render()
     {
-        if (session('delivery_lat') && session('delivery_lng')) {
-            $this->userLat = session('delivery_lat');
-            $this->userLng = session('delivery_lng');
-        }
-
-        $branches = Branch::where('status', 'ACTIVE')
-            ->when($this->search, fn ($q) => $q->where('name', 'like', "%{$this->search}%"))
+        $categories = Category::where('is_active', true)
+            ->where('is_published', true)
+            ->withCount(['products' => function ($q) {
+                $q->where('is_active', true)
+                    ->where('is_published', true)
+                    ->where('is_published_delivery', true);
+            }])
+            ->orderBy('sort_order')
             ->get()
-            ->map(fn ($branch) => [
-                'id' => $branch->id,
-                'name' => $branch->name,
-                'address' => $branch->address,
-                'delivery_fee' => $branch->delivery_fee,
-                'estimated_delivery_minutes' => $branch->estimated_delivery_minutes,
-                'latitude' => $branch->latitude,
-                'longitude' => $branch->longitude,
-                'distance_km' => $branch->latitude && $branch->longitude
-                    ? DistanceService::haversine($this->userLat, $this->userLng, $branch->latitude, $branch->longitude)
-                    : null,
-                'distance_label' => $branch->latitude && $branch->longitude
-                    ? DistanceService::distanceInKm($this->userLat, $this->userLng, $branch->latitude, $branch->longitude)
-                    : null,
-            ])
-            ->sortBy('distance_km')
+            ->filter(fn ($cat) => $cat->products_count > 0)
             ->values();
 
+        $productsQuery = \App\Models\Product::where('is_active', true)
+            ->where('is_published', true)
+            ->where('is_published_delivery', true)
+            ->where('is_available', true)
+            ->with('variants');
+
+        if ($this->search !== '') {
+            $productsQuery->where('name', 'like', "%{$this->search}%");
+        }
+
+        $products = $productsQuery->orderBy('sort_order')->get();
+
+        $cartCount = collect(session('delivery_cart', []))->sum('quantity');
+        $deliveryFee = (float) Setting::get('delivery_fee', 5000);
+        $estMinutes = (int) Setting::get('estimated_delivery_minutes', 30);
+
         return view('livewire.delivery.home', [
-            'branches' => $branches,
+            'categories' => $categories,
+            'products' => $products,
+            'cartCount' => $cartCount,
+            'deliveryFee' => $deliveryFee,
+            'estMinutes' => $estMinutes,
             'user' => auth()->user(),
         ])->layout('components.layouts.delivery');
     }

@@ -15,7 +15,7 @@
             <div class="text-center py-16">
                 <p class="text-4xl mb-3">🛒</p>
                 <p class="text-warm-500 text-sm">Keranjang masih kosong</p>
-                <a href="{{ $branchId ? route('delivery.branch', $branchId) : route('delivery.home') }}" class="inline-block mt-3 px-6 py-2 bg-primary text-white text-sm font-semibold rounded-xl hover:bg-primary-700 transition">Pesan Sekarang</a>
+                <a href="{{ route('delivery.home') }}" class="inline-block mt-3 px-6 py-2 bg-primary text-white text-sm font-semibold rounded-xl hover:bg-primary-700 transition">Pesan Sekarang</a>
             </div>
         @else
             <div class="space-y-3">

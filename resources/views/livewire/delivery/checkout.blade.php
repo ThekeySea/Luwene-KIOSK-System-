@@ -47,9 +47,6 @@
         {{-- Ringkasan Pesanan --}}
         <div class="bg-white rounded-2xl p-4 shadow-sm border border-warm-100">
             <h3 class="text-xs font-semibold text-warm-400 uppercase tracking-wide mb-2">Ringkasan Pesanan</h3>
-            @if($branch)
-                <p class="text-xs text-warm-400 mb-2">Dikirim dari <span class="font-semibold text-warm-600">{{ $branch->name }}</span></p>
-            @endif
             <div class="space-y-1.5">
                 @foreach($items as $item)
                     <div class="flex justify-between items-start gap-3">

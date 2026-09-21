@@ -2,7 +2,6 @@
 
 namespace App\Livewire\Admin;
 
-use App\Models\Branch;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
@@ -20,7 +19,6 @@ class Staff extends Component
     public string $password = '';
     public string $role = 'CASHIER';
     public string $status = 'ACTIVE';
-    public string $branch_id = '';
 
     protected function rules(): array
     {
@@ -29,7 +27,6 @@ class Staff extends Component
             'email' => ['required', 'email', 'max:150', Rule::unique('users', 'email')->ignore($this->editingId)],
             'role' => 'required|in:CASHIER,ADMIN',
             'status' => 'required|in:ACTIVE,INACTIVE',
-            'branch_id' => 'nullable|exists:branches,id',
         ];
 
         if (! $this->editingId || $this->password !== '') {
@@ -44,7 +41,6 @@ class Staff extends Component
         $this->reset(['editingId', 'name', 'email', 'password']);
         $this->role = 'CASHIER';
         $this->status = 'ACTIVE';
-        $this->branch_id = (string) (Branch::first()?->id ?? '');
         $this->resetErrorBag();
         $this->showModal = true;
     }
@@ -64,7 +60,6 @@ class Staff extends Component
         $this->password = '';
         $this->role = $user->role;
         $this->status = $user->status ?? 'ACTIVE';
-        $this->branch_id = (string) ($user->branch_id ?? '');
         $this->resetErrorBag();
         $this->showModal = true;
     }
@@ -78,7 +73,6 @@ class Staff extends Component
             'email' => trim($this->email),
             'role' => $this->role,
             'status' => $this->status,
-            'branch_id' => $this->branch_id === '' ? null : $this->branch_id,
         ];
 
         if (! $this->editingId || $this->password !== '') {
@@ -124,7 +118,6 @@ class Staff extends Component
         return view('livewire.admin.staff', [
             'staff' => $staff,
             'customerCount' => $customerCount,
-            'branches' => Branch::orderBy('name')->get(),
         ])->layout('components.layouts.admin', [
             'pageTitle' => 'Staff',
             'pageActions' => '<button wire:click="openCreate" class="px-4 py-2 bg-primary text-white text-sm font-semibold rounded-lg hover:bg-primary-700 transition">+ Tambah Staff</button>',

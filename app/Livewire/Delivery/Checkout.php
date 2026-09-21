@@ -35,9 +35,7 @@ class Checkout extends Component
 
     public function getDeliveryFeeProperty(): float
     {
-        $branchId = session('delivery_branch_id');
-        $branch = $branchId ? \App\Models\Branch::find($branchId) : null;
-        return $branch?->delivery_fee ?? 0;
+        return (float) Setting::get('delivery_fee', 5000);
     }
 
     public function getTotalProperty(): float
@@ -79,25 +77,24 @@ class Checkout extends Component
         $this->isSubmitting = true;
 
         try {
-            $branchId = session('delivery_branch_id');
+            $branch = \App\Models\Branch::first();
             $address = DeliveryAddress::where('user_id', auth()->id())->find($this->selectedAddressId);
 
-            if (! $branchId || ! $address) {
+            if (! $branch || ! $address) {
                 $this->dispatch('toast', message: 'Data tidak lengkap.', type: 'error');
                 return;
             }
 
-            $maxNumber = Order::where('branch_id', $branchId)->max('order_number');
+            $maxNumber = Order::max('order_number');
             $prefix = Setting::get('order_prefix', 'LW');
             $next = $maxNumber ? (int) substr($maxNumber, strlen($prefix) + 1) + 1 : 1;
             $orderNumber = $prefix . '-' . str_pad($next, 5, '0', STR_PAD_LEFT);
 
-            $branch = \App\Models\Branch::find($branchId);
-            $estMinutes = $branch?->estimated_delivery_minutes ?? 30;
+            $estMinutes = (int) Setting::get('estimated_delivery_minutes', 30);
             $deliveryAddressFull = $address->address . ($address->label ? " ({$address->label})" : '');
 
             $order = Order::create([
-                'branch_id' => $branchId,
+                'branch_id' => $branch->id,
                 'user_id' => auth()->id(),
                 'customer_name' => auth()->user()->name,
                 'customer_email' => auth()->user()->email,
@@ -165,20 +162,12 @@ class Checkout extends Component
 
     public function render()
     {
-        $items = $this->items;
-        $subtotal = $this->subtotal;
-        $deliveryFee = $this->deliveryFee;
-        $total = $this->total;
-        $addresses = $this->addresses;
-        $branch = \App\Models\Branch::find(session('delivery_branch_id'));
-
         return view('livewire.delivery.checkout', [
-            'items' => $items,
-            'subtotal' => $subtotal,
-            'deliveryFee' => $deliveryFee,
-            'total' => $total,
-            'addresses' => $addresses,
-            'branch' => $branch,
+            'items' => $this->items,
+            'subtotal' => $this->subtotal,
+            'deliveryFee' => $this->deliveryFee,
+            'total' => $this->total,
+            'addresses' => $this->addresses,
         ])->layout('components.layouts.delivery');
     }
 }

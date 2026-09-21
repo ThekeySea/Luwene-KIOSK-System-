@@ -1,7 +1,7 @@
 <div class="min-h-dvh bg-warm-50 pb-28">
     <header class="bg-white shadow-sm sticky top-0 z-10">
         <div class="max-w-lg mx-auto px-4 py-3 flex items-center gap-3">
-            <a href="{{ $branchId ? route('delivery.branch', $branchId) : route('delivery.home') }}" class="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-warm-100 text-warm-500 hover:text-dark transition shrink-0">
+            <a href="{{ route('delivery.home') }}" class="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-warm-100 text-warm-500 hover:text-dark transition shrink-0">
                 <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                 </svg>

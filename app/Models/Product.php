@@ -62,6 +62,11 @@ class Product extends Model
             ->orderByPivot('sort_order');
     }
 
+    public function orderItems()
+    {
+        return $this->hasMany(OrderItem::class);
+    }
+
     public function packageItems()
     {
         return $this->hasMany(PackageItem::class);

@@ -179,6 +179,8 @@ class PackageDetail extends Component
 
         return view('livewire.customer.package-detail', [
             'totalPrice' => $totalPrice,
+            'sections' => $this->sections,
+            'fixedItems' => $this->fixedItems,
         ])->layout('components.layouts.customer', ['showNav' => false]);
     }
 }

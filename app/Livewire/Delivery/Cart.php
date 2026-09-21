@@ -41,16 +41,13 @@ class Cart extends Component
 
     public function render()
     {
-        $branchId = session('delivery_branch_id');
-        $branch = $branchId ? \App\Models\Branch::find($branchId) : null;
-        $deliveryFee = $branch?->delivery_fee ?? 0;
+        $deliveryFee = (float) \App\Models\Setting::get('delivery_fee', 5000);
 
         return view('livewire.delivery.cart', [
             'items' => $this->items,
             'subtotal' => $this->subtotal,
             'deliveryFee' => $deliveryFee,
             'total' => $this->subtotal + $deliveryFee,
-            'branchId' => $branchId,
         ])->layout('components.layouts.delivery');
     }
 }
