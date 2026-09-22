@@ -14,16 +14,35 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        $sslCa = config('database.connections.mysql.options.' . \PDO::MYSQL_ATTR_SSL_CA);
+        if (config('database.default') !== 'mysql') {
+            return;
+        }
 
-        if ($sslCa && !file_exists($sslCa)) {
-            $caPath = '/tmp/tidb-ca.pem';
-            if (!file_exists($caPath)) {
-                file_put_contents($caPath, $sslCa);
+        $currentCa = config('database.connections.mysql.options.' . \PDO::MYSQL_ATTR_SSL_CA);
+
+        if ($currentCa && file_exists($currentCa)) {
+            return;
+        }
+
+        $caPath = '/tmp/tidb-ca.pem';
+        if (!file_exists($caPath)) {
+            $candidates = [
+                base_path('cacert.pem'),
+                base_path('vendor/guzzlehttp/guzzle/src/cacert.pem'),
+            ];
+            foreach ($candidates as $candidate) {
+                if (file_exists($candidate)) {
+                    file_put_contents($caPath, file_get_contents($candidate));
+                    break;
+                }
             }
-            config(['database.connections.mysql.options' => [
-                \PDO::MYSQL_ATTR_SSL_CA => $caPath,
-            ]]);
+        }
+
+        if (file_exists($caPath)) {
+            config(['database.connections.mysql.options' => array_merge(
+                config('database.connections.mysql.options', []),
+                [\PDO::MYSQL_ATTR_SSL_CA => $caPath]
+            )]);
         }
     }
 }
