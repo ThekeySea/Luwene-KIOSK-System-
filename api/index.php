@@ -3,6 +3,10 @@
 error_reporting(E_ALL);
 ini_set('display_errors', '0');
 
+$_ENV['APP_DEBUG'] = 'true';
+$_SERVER['APP_DEBUG'] = 'true';
+putenv('APP_DEBUG=true');
+
 require __DIR__ . '/../vendor/autoload.php';
 
 try {
