@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Branch;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
@@ -23,6 +24,12 @@ class PopularProductsSeeder extends Seeder
             return;
         }
 
+        $branch = Branch::first();
+        if (! $branch) {
+            return;
+        }
+
+        $counter = 200;
         foreach ($popularProducts as $slug => $totalSold) {
             $product = Product::where('slug', $slug)->first();
             if (! $product) {
@@ -35,11 +42,12 @@ class PopularProductsSeeder extends Seeder
 
                 $order = Order::create([
                     'user_id' => $customer->id,
+                    'branch_id' => $branch->id,
                     'customer_name' => $customer->name,
                     'customer_email' => $customer->email,
                     'customer_phone' => '-',
                     'client_order_id' => \Illuminate\Support\Str::uuid()->toString(),
-                    'order_number' => 'LW-' . str_pad(100 + $i, 5, '0', STR_PAD_LEFT),
+                    'order_number' => 'LW-' . str_pad(++$counter, 5, '0', STR_PAD_LEFT),
                     'order_mode' => 'DINE_IN',
                     'status' => 'COMPLETED',
                     'payment_status' => 'PAID',

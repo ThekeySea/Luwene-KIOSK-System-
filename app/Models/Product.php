@@ -51,7 +51,6 @@ class Product extends Model
     {
         return $this->belongsToMany(ModifierGroup::class, 'product_modifier_groups')
             ->withPivot('is_required', 'min_selection', 'max_selection', 'sort_order')
-            ->withPivot('id as pivot_id')
             ->orderByPivot('sort_order');
     }
 

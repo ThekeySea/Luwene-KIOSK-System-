@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('product_modifier_groups', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+            $table->id();
             $table->uuid('product_id');
             $table->uuid('modifier_group_id');
             $table->boolean('is_required')->default(false);

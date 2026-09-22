@@ -28,17 +28,41 @@ return new class extends Migration
 
         foreach ($foodProducts as $product) {
             if ($nasiGroupId) {
-                DB::table('product_modifier_groups')->updateOrInsert(
-                    ['product_id' => $product->id, 'modifier_group_id' => $nasiGroupId],
-                    ['id' => Str::uuid()->toString(), 'is_required' => true, 'min_selection' => 1, 'max_selection' => 1, 'sort_order' => 1, 'created_at' => $now, 'updated_at' => $now]
-                );
+                $exists = DB::table('product_modifier_groups')
+                    ->where('product_id', $product->id)
+                    ->where('modifier_group_id', $nasiGroupId)
+                    ->exists();
+                if (!$exists) {
+                    DB::table('product_modifier_groups')->insert([
+                        'product_id' => $product->id,
+                        'modifier_group_id' => $nasiGroupId,
+                        'is_required' => true,
+                        'min_selection' => 1,
+                        'max_selection' => 1,
+                        'sort_order' => 1,
+                        'created_at' => $now,
+                        'updated_at' => $now,
+                    ]);
+                }
             }
 
             if ($extraGroupId) {
-                DB::table('product_modifier_groups')->updateOrInsert(
-                    ['product_id' => $product->id, 'modifier_group_id' => $extraGroupId],
-                    ['id' => Str::uuid()->toString(), 'is_required' => false, 'min_selection' => 0, 'max_selection' => null, 'sort_order' => 2, 'created_at' => $now, 'updated_at' => $now]
-                );
+                $exists = DB::table('product_modifier_groups')
+                    ->where('product_id', $product->id)
+                    ->where('modifier_group_id', $extraGroupId)
+                    ->exists();
+                if (!$exists) {
+                    DB::table('product_modifier_groups')->insert([
+                        'product_id' => $product->id,
+                        'modifier_group_id' => $extraGroupId,
+                        'is_required' => false,
+                        'min_selection' => 0,
+                        'max_selection' => null,
+                        'sort_order' => 2,
+                        'created_at' => $now,
+                        'updated_at' => $now,
+                    ]);
+                }
             }
 
             foreach ($sambalIds as $index => $sambalId) {
@@ -52,10 +76,21 @@ return new class extends Migration
 
                 $isRequired = $sambalPrice === 0;
 
-                DB::table('product_sambals')->updateOrInsert(
-                    ['product_id' => $product->id, 'sambal_id' => $sambalId],
-                    ['price' => $sambalPrice, 'is_required' => $isRequired, 'sort_order' => $index, 'created_at' => $now, 'updated_at' => $now]
-                );
+                $exists = DB::table('product_sambals')
+                    ->where('product_id', $product->id)
+                    ->where('sambal_id', $sambalId)
+                    ->exists();
+                if (!$exists) {
+                    DB::table('product_sambals')->insert([
+                        'product_id' => $product->id,
+                        'sambal_id' => $sambalId,
+                        'price' => $sambalPrice,
+                        'is_required' => $isRequired,
+                        'sort_order' => $index,
+                        'created_at' => $now,
+                        'updated_at' => $now,
+                    ]);
+                }
             }
         }
     }
