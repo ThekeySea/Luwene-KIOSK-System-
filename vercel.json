@@ -5,12 +5,34 @@
     "api/index.php": {
       "runtime": "vercel-php@0.7.4",
       "memory": 512,
-      "maxDuration": 30
+      "maxDuration": 30,
+      "includeFiles": [
+        "vendor/**",
+        "app/**",
+        "bootstrap/**",
+        "config/**",
+        "database/**",
+        "resources/views/**",
+        "routes/**",
+        "public/**/*.css",
+        "public/**/*.js",
+        "public/**/*.svg",
+        "public/**/*.png",
+        "public/**/*.jpg",
+        "public/**/*.ico",
+        "public/**/*.woff",
+        "public/**/*.woff2",
+        "public/**/*.ttf",
+        "public/favicon.ico",
+        "public/robots.txt",
+        "storage/**",
+        "cacert.pem"
+      ]
     }
   },
   "routes": [
-    { "src": "/storage/(.*)", "headers": { "cache-control": "public, max-age=604800" } },
     { "src": "/build/(.*)", "headers": { "cache-control": "public, max-age=31536000, immutable" } },
+    { "src": "/storage/(.*)", "headers": { "cache-control": "public, max-age=604800" } },
     { "src": "/(.*)", "dest": "/api/index.php" }
   ]
 }
