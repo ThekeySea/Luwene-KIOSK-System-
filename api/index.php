@@ -7,6 +7,26 @@ $_ENV['APP_DEBUG'] = 'true';
 $_SERVER['APP_DEBUG'] = 'true';
 putenv('APP_DEBUG=true');
 
+foreach ($_ENV as $key => $value) {
+    if ($value === '') {
+        unset($_ENV[$key]);
+    }
+}
+foreach ($_SERVER as $key => $value) {
+    if ($value === '' && is_string($key)) {
+        unset($_SERVER[$key]);
+    }
+}
+
+$osEnv = getenv();
+if (is_array($osEnv)) {
+    foreach ($osEnv as $key => $value) {
+        if ($value === '') {
+            putenv($key);
+        }
+    }
+}
+
 require __DIR__ . '/../vendor/autoload.php';
 
 try {
