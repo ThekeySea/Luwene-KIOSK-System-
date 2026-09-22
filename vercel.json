@@ -1,7 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "installCommand": "apt-get update -qq && apt-get install -y -qq php-cli php-mbstring php-xml php-curl php-zip php-sqlite3 unzip && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer && composer install --no-dev --prefer-dist --optimize-autoloader",
-  "buildCommand": "npm ci && npm run build",
+  "buildCommand": "bash scripts/vercel-install.sh && npm ci && npm run build",
   "outputDirectory": "public",
   "functions": {
     "api/index.php": {
