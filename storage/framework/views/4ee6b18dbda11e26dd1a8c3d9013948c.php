@@ -1,22 +1,25 @@
-<div class="min-h-dvh bg-warm-50 pb-28">
+<div class="min-h-dvh bg-warm-50">
     <header class="bg-white shadow-sm sticky top-0 z-10">
-        <div class="max-w-lg mx-auto px-4 py-3 flex items-center gap-3">
-            <a href="<?php echo e(route('delivery.home')); ?>" class="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-warm-100 text-warm-500 hover:text-dark transition shrink-0">
-                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div class="max-w-3xl mx-auto px-4 py-4 flex items-center justify-between">
+            <a href="<?php echo e(route('customer.menu')); ?>" class="text-warm-400 hover:text-dark transition">
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                 </svg>
             </a>
-            <h1 class="text-sm font-bold text-dark">Detail Menu</h1>
+            <h1 class="text-lg font-display font-bold text-dark">Detail Menu</h1>
+            <div class="w-6"></div>
         </div>
     </header>
 
-    <div class="max-w-lg mx-auto">
+    <div class="max-w-3xl mx-auto pb-32">
         <div class="aspect-[4/3] bg-warm-100">
             <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($product->image): ?>
                 <img src="<?php echo e(str_starts_with($product->image ?? '', 'http') ? $product->image : asset('storage/' . $product->image)); ?>" alt="<?php echo e($product->name); ?>" class="w-full h-full object-cover">
             <?php else: ?>
                 <div class="w-full h-full flex items-center justify-center">
-                    <span class="text-6xl">🍽️</span>
+                    <svg class="w-20 h-20 text-warm-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                    </svg>
                 </div>
             <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
         </div>
@@ -29,6 +32,7 @@
                 </div>
                 <p class="text-xl font-bold text-primary">Rp <?php echo e(number_format($variantPrice, 0, ',', '.')); ?></p>
             </div>
+
             <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($product->description): ?>
                 <p class="text-sm text-warm-600 mt-3"><?php echo e($product->description); ?></p>
             <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
@@ -36,6 +40,7 @@
 
         <form wire:submit.prevent="addToCart">
             <div class="px-4 space-y-6">
+                
                 <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($product->variants->count() > 0): ?>
                     <div>
                         <h3 class="text-sm font-semibold text-dark mb-3">Pilih Tipe</h3>
@@ -49,8 +54,10 @@
                                     </div>
                                     <span class="text-sm font-semibold text-primary">Rp <?php echo e(number_format($variant->price, 0, ',', '.')); ?></span>
                                     <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($selectedVariant === $variant->id): ?>
-                                        <span class="w-6 h-6 rounded-full bg-primary text-white flex items-center justify-center shrink-0">
-                                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" /></svg>
+                                        <span class="w-6 h-6 rounded-full bg-primary text-white flex items-center justify-center shrink-0" aria-hidden="true">
+                                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+                                            </svg>
                                         </span>
                                     <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
                                 </label>
@@ -67,6 +74,7 @@ unset($__errorArgs, $__bag); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendB
                     </div>
                 <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
 
+                
                 <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($showNasi && $nasiGroup && $nasiGroup->modifiers->count() > 0): ?>
                     <div>
                         <h3 class="text-sm font-semibold text-dark mb-3">Pilih Nasi <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($nasiIsRequired): ?><span class="text-red-500">*</span><?php else: ?><span class="text-warm-400 font-normal">(Opsional)</span><?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?></h3>
@@ -84,8 +92,10 @@ unset($__errorArgs, $__bag); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendB
                                         <span class="text-xs text-warm-400">Gratis</span>
                                     <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
                                     <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($selectedNasi === $nasi->id): ?>
-                                        <span class="w-6 h-6 rounded-full bg-primary text-white flex items-center justify-center shrink-0">
-                                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" /></svg>
+                                        <span class="w-6 h-6 rounded-full bg-primary text-white flex items-center justify-center shrink-0" aria-hidden="true">
+                                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+                                            </svg>
                                         </span>
                                     <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
                                 </label>
@@ -102,6 +112,7 @@ unset($__errorArgs, $__bag); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendB
                     </div>
                 <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
 
+                
                 <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($sambals->count() > 0): ?>
                     <div>
                         <h3 class="text-sm font-semibold text-dark mb-3">Pilih Sambal <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($sambalIsRequired): ?><span class="text-red-500">*</span><?php else: ?><span class="text-warm-400 font-normal">(Opsional)</span><?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?></h3>
@@ -111,14 +122,18 @@ unset($__errorArgs, $__bag); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendB
                                     <?php echo e($selectedSambal === $sambal->id ? 'border-primary bg-primary/10 shadow-sm' : 'border-warm-200 bg-white'); ?>">
                                     <input type="radio" name="sambal" wire:model.live="selectedSambal" value="<?php echo e($sambal->id); ?>" class="sr-only">
                                     <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($selectedSambal === $sambal->id): ?>
-                                        <span class="absolute top-1.5 right-1.5 w-5 h-5 rounded-full bg-primary text-white flex items-center justify-center">
-                                            <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" /></svg>
+                                        <span class="absolute top-1.5 right-1.5 w-5 h-5 rounded-full bg-primary text-white flex items-center justify-center" aria-hidden="true">
+                                            <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+                                            </svg>
                                         </span>
                                     <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
                                     <span class="text-2xl mb-1">🌶️</span>
                                     <span class="text-xs font-medium text-dark text-center"><?php echo e($sambal->name); ?></span>
                                     <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($sambal->pivot->price > 0): ?>
                                         <span class="text-xs text-accent">+Rp <?php echo e(number_format($sambal->pivot->price, 0, ',', '.')); ?></span>
+                                    <?php else: ?>
+                                        <span class="text-[10px] text-green-600 font-medium">Gratis</span>
                                     <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
                                 </label>
                             <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::endLoop(); ?><?php endif; ?><?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::closeLoop(); ?><?php endif; ?>
@@ -134,6 +149,7 @@ unset($__errorArgs, $__bag); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendB
                     </div>
                 <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
 
+                
                 <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($spiceLevels->count() > 0): ?>
                     <div>
                         <h3 class="text-sm font-semibold text-dark mb-3">Level Pedas <span class="text-red-500">*</span></h3>
@@ -143,8 +159,10 @@ unset($__errorArgs, $__bag); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendB
                                     <?php echo e($selectedSpiceLevel === $level->id ? 'border-primary bg-primary/10 shadow-sm' : 'border-warm-200 bg-white'); ?>">
                                     <input type="radio" name="spice_level" wire:model.live="selectedSpiceLevel" value="<?php echo e($level->id); ?>" class="sr-only">
                                     <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($selectedSpiceLevel === $level->id): ?>
-                                        <span class="absolute top-1.5 right-1.5 w-5 h-5 rounded-full bg-primary text-white flex items-center justify-center">
-                                            <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" /></svg>
+                                        <span class="absolute top-1.5 right-1.5 w-5 h-5 rounded-full bg-primary text-white flex items-center justify-center" aria-hidden="true">
+                                            <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+                                            </svg>
                                         </span>
                                     <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
                                     <span class="text-lg font-bold
@@ -172,6 +190,7 @@ unset($__errorArgs, $__bag); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendB
                     </div>
                 <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
 
+                
                 <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($extraGroup && $extraGroup->modifiers->count() > 0): ?>
                     <div>
                         <h3 class="text-sm font-semibold text-dark mb-3">Extra (Opsional)</h3>
@@ -190,6 +209,7 @@ unset($__errorArgs, $__bag); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendB
                     </div>
                 <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
 
+                
                 <div>
                     <h3 class="text-sm font-semibold text-dark mb-3">Jumlah</h3>
                     <div class="flex items-center gap-4">
@@ -201,12 +221,12 @@ unset($__errorArgs, $__bag); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendB
             </div>
 
             <div class="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-warm-100 z-20">
-                <div class="max-w-lg mx-auto flex items-center justify-between">
+                <div class="max-w-3xl mx-auto flex items-center justify-between">
                     <div>
                         <p class="text-xs text-warm-400">Total</p>
                         <p class="text-xl font-bold text-primary">Rp <?php echo e(number_format($totalPrice, 0, ',', '.')); ?></p>
                     </div>
-                    <button type="submit" class="px-8 py-3.5 bg-primary text-white font-semibold rounded-xl hover:bg-primary/90 transition"
+                    <button type="submit" class="px-8 py-4 text-lg bg-primary text-white font-semibold rounded-xl hover:bg-primary/90 transition"
                         wire:loading.attr="disabled" wire:loading.class="opacity-50">
                         <span wire:loading.remove>Tambah ke Keranjang</span>
                         <span wire:loading>Menambahkan...</span>
@@ -216,4 +236,4 @@ unset($__errorArgs, $__bag); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendB
         </form>
     </div>
 </div>
-<?php /**PATH C:\laragon\www\Luwene\resources\views/livewire/delivery/product-detail.blade.php ENDPATH**/ ?>
+<?php /**PATH C:\laragon\www\Luwene\resources\views/livewire/customer/product-detail.blade.php ENDPATH**/ ?>

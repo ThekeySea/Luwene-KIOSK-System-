@@ -154,4 +154,7 @@
                 </button>
             </div>
         </div>
+
+        {{-- QRIS Overlay — always in DOM, triggered by Livewire event --}}
+        <x-qris-overlay />
     </div>

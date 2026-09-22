@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
     <title><?php echo $__env->yieldContent('title', 'LUWENE'); ?></title>
     <?php echo app('Illuminate\Foundation\Vite')(['resources/css/app.css', 'resources/js/app.js']); ?>
     <?php echo \Livewire\Mechanisms\FrontendAssets\FrontendAssets::styles(); ?>
@@ -20,8 +21,10 @@
             $isPromo = request()->routeIs('customer.promo');
             $isFaq = request()->routeIs('customer.faq');
         ?>
-        <div class="h-28" aria-hidden="true"></div>
-        <nav class="fixed bottom-0 left-0 right-0 z-30 px-4" style="padding-bottom: calc(env(safe-area-inset-bottom) + 0.75rem);">
+
+        
+        <div class="h-28 md:hidden" aria-hidden="true"></div>
+        <nav class="fixed bottom-0 left-0 right-0 z-30 px-4 md:hidden" style="padding-bottom: calc(env(safe-area-inset-bottom) + 0.75rem);">
             <div class="max-w-lg mx-auto bg-white rounded-full border border-warm-100 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] px-2 py-2" style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); align-items: center;">
                 <a href="<?php echo e(route('home')); ?>" class="flex flex-col items-center gap-0.5 py-1 transition <?php echo e($isHome ? 'text-primary' : 'text-warm-400 hover:text-warm-600'); ?>">
                     <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -58,6 +61,26 @@
                     </svg>
                     <span class="text-xs <?php echo e($isFaq ? 'font-bold' : 'font-medium'); ?>">FAQ</span>
                 </a>
+            </div>
+        </nav>
+
+        
+        <nav class="hidden md:block fixed top-0 left-0 right-0 z-30 bg-white border-b border-warm-100 shadow-sm">
+            <div class="max-w-5xl mx-auto px-6 py-3 flex items-center justify-between">
+                <div class="flex items-center gap-8">
+                    <a href="<?php echo e(route('home')); ?>" class="flex items-center gap-2">
+                        <span class="text-xl">🍗</span>
+                        <span class="text-lg font-display font-bold text-primary">LUWENE</span>
+                    </a>
+                    <div class="flex items-center gap-1">
+                        <a href="<?php echo e(route('home')); ?>" class="px-4 py-2 text-sm font-medium rounded-lg transition <?php echo e($isHome ? 'bg-primary/10 text-primary font-bold' : 'text-warm-500 hover:bg-warm-100'); ?>">Beranda</a>
+                        <a href="<?php echo e(route('customer.menu')); ?>" class="px-4 py-2 text-sm font-medium rounded-lg transition <?php echo e($isMenu ? 'bg-primary/10 text-primary font-bold' : 'text-warm-500 hover:bg-warm-100'); ?>">Menu</a>
+                        <a href="<?php echo e(route('customer.cart')); ?>" class="px-4 py-2 text-sm font-medium rounded-lg transition <?php echo e($isCart ? 'bg-primary/10 text-primary font-bold' : 'text-warm-500 hover:bg-warm-100'); ?>">Nampan <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($navCartCount > 0): ?><span class="ml-1 px-1.5 py-0.5 bg-primary text-white text-[10px] font-bold rounded-full"><?php echo e($navCartCount); ?></span><?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?></a>
+                        <a href="<?php echo e(route('customer.promo')); ?>" class="px-4 py-2 text-sm font-medium rounded-lg transition <?php echo e($isPromo ? 'bg-primary/10 text-primary font-bold' : 'text-warm-500 hover:bg-warm-100'); ?>">Promo</a>
+                        <a href="<?php echo e(route('customer.faq')); ?>" class="px-4 py-2 text-sm font-medium rounded-lg transition <?php echo e($isFaq ? 'bg-primary/10 text-primary font-bold' : 'text-warm-500 hover:bg-warm-100'); ?>">FAQ</a>
+                    </div>
+                </div>
+                </div>
             </div>
         </nav>
     <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>

@@ -105,6 +105,8 @@
                                     <span class="text-xs font-medium text-dark text-center">{{ $sambal->name }}</span>
                                     @if($sambal->pivot->price > 0)
                                         <span class="text-xs text-accent">+Rp {{ number_format($sambal->pivot->price, 0, ',', '.') }}</span>
+                                    @else
+                                        <span class="text-[10px] text-green-600 font-medium">Gratis</span>
                                     @endif
                                 </label>
                             @endforeach

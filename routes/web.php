@@ -43,7 +43,7 @@ Route::prefix('customer')->name('customer.')->group(function () {
         $barcode = \Milon\Barcode\Facades\DNS1DFacade::getBarcodePNG($order->order_number, 'C128', 2, 60);
 
         $trackingUrl = route('customer.order-tracking', $order->id);
-        $qrCode = \Milon\Barcode\Facades\DNS2DFacade::getBarcodePNG($trackingUrl, 'QR', 4, 4);
+        $qrCode = \SimpleSoftwareIO\QrCode\Facades\QrCode::format('svg')->size(150)->generate($trackingUrl);
 
         $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('receipts.order-pdf', [
             'order' => $order,
@@ -120,7 +120,7 @@ Route::middleware(['auth', 'role:CUSTOMER'])->prefix('delivery')->name('delivery
 
         $barcode = \Milon\Barcode\Facades\DNS1DFacade::getBarcodePNG($order->order_number, 'C128', 2, 60);
         $trackingUrl = route('delivery.track', $order->id);
-        $qrCode = \Milon\Barcode\Facades\DNS2DFacade::getBarcodePNG($trackingUrl, 'QR', 4, 4);
+        $qrCode = \SimpleSoftwareIO\QrCode\Facades\QrCode::format('svg')->size(150)->generate($trackingUrl);
 
         $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('receipts.order-pdf', [
             'order' => $order,
@@ -133,3 +133,9 @@ Route::middleware(['auth', 'role:CUSTOMER'])->prefix('delivery')->name('delivery
     })->name('receipt');
     Route::get('/profile', App\Livewire\Delivery\Profile::class)->name('profile');
 });
+
+// Midtrans Payment Routes
+Route::post('/payment/midtrans/callback', [App\Http\Controllers\MidtransCallbackController::class, 'callback'])->name('payment.midtrans.callback');
+Route::get('/payment/midtrans/status/{orderNumber}', [App\Http\Controllers\MidtransCallbackController::class, 'status'])->name('payment.midtrans.status');
+Route::post('/payment/bypass/{orderId}', [App\Http\Controllers\MidtransCallbackController::class, 'bypass'])->name('payment.bypass');
+Route::post('/payment/timeout/{orderId}', [App\Http\Controllers\MidtransCallbackController::class, 'timeout'])->name('payment.timeout');

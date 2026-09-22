@@ -1,9 +1,11 @@
-<div class="min-h-dvh bg-warm-50 pb-24">
+<div class="min-h-dvh bg-warm-50 pb-24 md:pb-0">
     <form id="delivery-logout-form" method="POST" action="{{ route('delivery.logout') }}" class="hidden">
         @csrf
     </form>
+
+    {{-- Header --}}
     <header class="bg-white shadow-sm sticky top-0 z-10">
-        <div class="max-w-lg mx-auto px-4 py-3">
+        <div class="max-w-6xl mx-auto px-4 py-3">
             <div class="flex items-center justify-between mb-3">
                 <div class="flex items-center gap-2">
                     <button type="button" onclick="document.getElementById('delivery-logout-form').submit()" class="w-9 h-9 flex items-center justify-center rounded-full hover:bg-warm-100 text-warm-500 hover:text-dark transition shrink-0">
@@ -42,8 +44,8 @@
         </div>
 
         @if($categories->isNotEmpty())
-            <div class="max-w-lg mx-auto overflow-x-auto scrollbar-hide border-t border-warm-100">
-                <div class="flex gap-0 px-4 py-2 min-w-max">
+            <div class="max-w-6xl mx-auto overflow-x-auto scrollbar-hide border-t border-warm-100">
+                <div class="flex gap-2 px-4 py-2 min-w-max">
                     @foreach ($categories as $cat)
                         @php
                             $catSlug = $cat->slug;
@@ -57,65 +59,120 @@
                                 default => '🍽️',
                             };
                         @endphp
-                        <span class="px-3 py-1 text-xs font-medium text-warm-600 whitespace-nowrap">{{ $icon }} {{ $cat->name }}</span>
+                        <button type="button" wire:click="toggleCategory('{{ $cat->id }}')"
+                            class="px-3 py-1.5 text-xs font-medium whitespace-nowrap rounded-full border transition
+                            {{ $selectedCategory === $cat->id
+                                ? 'bg-primary text-white border-primary shadow-sm'
+                                : 'text-warm-600 border-warm-200 bg-white hover:bg-warm-100' }}">
+                            {{ $icon }} {{ $cat->name }}
+                        </button>
                     @endforeach
                 </div>
             </div>
         @endif
     </header>
 
-    <main class="max-w-lg mx-auto px-4 py-4">
-        @if ($products->isEmpty())
-            <div class="text-center py-16">
-                <p class="text-4xl mb-3">🍽️</p>
-                <p class="text-warm-500 text-sm">
-                    @if($search)
-                        Tidak ada menu untuk "{{ $search }}"
-                    @else
-                        Menu belum tersedia
-                    @endif
-                </p>
-            </div>
-        @else
-            <div class="grid grid-cols-2 gap-3">
-                @foreach ($products as $product)
-                    @php
-                        $catSlug = $product->category->slug ?? '';
-                        $icon = match($catSlug) {
-                            'ayam' => '🍗',
-                            'daging' => '🥩',
-                            'seafood' => '🦐',
-                            'sambal' => '🌶️',
-                            'cemal-cemil' => '🍟',
-                            'minuman' => '🥤',
-                            default => '🍽️',
-                        };
-                    @endphp
-                    <a href="{{ route('delivery.product', $product->slug) }}" class="bg-white rounded-2xl shadow-sm border border-warm-100 overflow-hidden hover:shadow-md transition flex flex-col">
-                        <div class="aspect-[4/3] bg-warm-100 flex items-center justify-center relative">
-                            @if($product->image)
-                                <img src="{{ str_starts_with($product->image, 'http') ? $product->image : asset('storage/'.$product->image) }}" alt="{{ $product->name }}" class="w-full h-full object-cover">
-                            @else
-                                <span class="text-4xl">{{ $icon }}</span>
-                            @endif
-                            @if($product->is_featured)
-                                <span class="absolute top-2 left-2 text-[9px] font-bold uppercase tracking-wide bg-accent text-white px-2 py-0.5 rounded-full shadow">Favorit</span>
-                            @endif
+    {{-- Main Content --}}
+    <div class="max-w-6xl mx-auto px-4 py-4 flex gap-6">
+        {{-- Menu Grid --}}
+        <main class="flex-1 min-w-0">
+            @if ($products->isEmpty())
+                <div class="text-center py-16">
+                    <p class="text-4xl mb-3">🍽️</p>
+                    <p class="text-warm-500 text-sm">
+                        @if($search)
+                            Tidak ada menu untuk "{{ $search }}"
+                        @else
+                            Menu belum tersedia
+                        @endif
+                    </p>
+                </div>
+            @else
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                    @foreach ($products as $product)
+                        @php
+                            $catSlug = $product->category->slug ?? '';
+                            $icon = match($catSlug) {
+                                'ayam' => '🍗',
+                                'daging' => '🥩',
+                                'seafood' => '🦐',
+                                'sambal' => '🌶️',
+                                'cemal-cemil' => '🍟',
+                                'minuman' => '🥤',
+                                default => '🍽️',
+                            };
+                        @endphp
+                        <a href="{{ route('delivery.product', $product->slug) }}" class="bg-white rounded-2xl shadow-sm border border-warm-100 overflow-hidden hover:shadow-md transition flex flex-col">
+                            <div class="aspect-[4/3] bg-warm-100 flex items-center justify-center relative overflow-hidden">
+                                @if($product->image)
+                                    <img src="{{ str_starts_with($product->image, 'http') ? $product->image : asset('storage/'.$product->image) }}" alt="{{ $product->name }}" class="w-full h-full object-cover">
+                                @else
+                                    <span class="text-4xl">{{ $icon }}</span>
+                                @endif
+                                @if($product->is_featured)
+                                    <span class="absolute top-2 left-2 text-[9px] font-bold uppercase tracking-wide bg-accent text-white px-2 py-0.5 rounded-full shadow">Favorit</span>
+                                @endif
+                            </div>
+                            <div class="p-3 flex flex-col flex-1">
+                                <h3 class="font-semibold text-dark text-xs leading-snug line-clamp-2 min-h-[2rem]">{{ $product->name }}</h3>
+                                <div class="mt-auto pt-2">
+                                    <p class="text-sm font-bold text-primary">Rp {{ number_format($product->base_price, 0, ',', '.') }}</p>
+                                </div>
+                            </div>
+                        </a>
+                    @endforeach
+                </div>
+            @endif
+        </main>
+
+        {{-- Desktop Cart Sidebar --}}
+        <aside class="hidden md:block w-80 shrink-0">
+            <div class="sticky top-20 space-y-4">
+                <div class="bg-white rounded-2xl shadow-sm border border-warm-100 p-4">
+                    <h3 class="font-bold text-dark text-sm mb-3">🛒 Keranjang</h3>
+                    @if($cartCount > 0)
+                        <div class="space-y-3 max-h-80 overflow-y-auto">
+                            @foreach($cart as $item)
+                                <div class="flex items-start gap-3">
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-xs font-semibold text-dark truncate">{{ $item['product_name'] }}</p>
+                                        @if($item['variant'])
+                                            <p class="text-[10px] text-warm-400">{{ $item['variant']['name'] }}</p>
+                                        @endif
+                                        <p class="text-[10px] text-warm-400">x{{ $item['quantity'] }}</p>
+                                    </div>
+                                    <p class="text-xs font-bold text-primary shrink-0">Rp {{ number_format($item['subtotal'], 0, ',', '.') }}</p>
+                                </div>
+                            @endforeach
                         </div>
-                        <div class="p-3 flex flex-col flex-1">
-                            <h3 class="font-semibold text-dark text-xs leading-snug line-clamp-2 min-h-[2rem]">{{ $product->name }}</h3>
-                            <div class="mt-auto pt-2">
-                                <p class="text-sm font-bold text-primary">Rp {{ number_format($product->base_price, 0, ',', '.') }}</p>
+                        <div class="border-t border-warm-100 mt-3 pt-3 space-y-1.5">
+                            <div class="flex justify-between text-xs">
+                                <span class="text-warm-500">Subtotal</span>
+                                <span class="text-dark">Rp {{ number_format($cartSubtotal, 0, ',', '.') }}</span>
+                            </div>
+                            <div class="flex justify-between text-xs">
+                                <span class="text-warm-500">Ongkir</span>
+                                <span class="text-dark">Rp {{ number_format($deliveryFee, 0, ',', '.') }}</span>
+                            </div>
+                            <div class="flex justify-between text-sm font-bold pt-2 border-t border-warm-100">
+                                <span class="text-dark">Total</span>
+                                <span class="text-primary">Rp {{ number_format($cartTotal, 0, ',', '.') }}</span>
                             </div>
                         </div>
-                    </a>
-                @endforeach
+                        <a href="{{ route('delivery.checkout') }}" class="block w-full mt-3 bg-primary text-white text-center text-sm font-semibold py-3 rounded-xl hover:bg-primary/90 transition">
+                            Checkout →
+                        </a>
+                    @else
+                        <p class="text-xs text-warm-400 text-center py-4">Keranjang kosong</p>
+                    @endif
+                </div>
             </div>
-        @endif
-    </main>
+        </aside>
+    </div>
 
+    {{-- Mobile Cart Bar --}}
     @if($cartCount > 0)
-        <div class="fixed bottom-0 left-0 right-0 p-4 z-20">
+        <div class="fixed bottom-0 left-0 right-0 p-4 z-20 md:hidden">
             <div class="max-w-lg mx-auto">
                 <a href="{{ route('delivery.cart') }}" class="flex items-center justify-between bg-primary text-white px-5 py-3.5 rounded-2xl shadow-lg hover:bg-primary-700 transition">
                     <div class="flex items-center gap-3">

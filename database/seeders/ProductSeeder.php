@@ -7,6 +7,7 @@ use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Models\ModifierGroup;
 use App\Models\Modifier;
+use App\Models\Sambal;
 use Illuminate\Database\Seeder;
 
 class ProductSeeder extends Seeder
@@ -24,6 +25,10 @@ class ProductSeeder extends Seeder
         Modifier::create(['modifier_group_id' => $extraGroup->id, 'name' => 'Tempe Goreng', 'price' => 3000, 'sort_order' => 1]);
         Modifier::create(['modifier_group_id' => $extraGroup->id, 'name' => 'Tahu Goreng', 'price' => 3000, 'sort_order' => 2]);
         Modifier::create(['modifier_group_id' => $extraGroup->id, 'name' => 'Lalapan', 'price' => 5000, 'sort_order' => 3]);
+
+        $sambalIds = Sambal::where('is_active', true)->pluck('id')->toArray();
+
+        $foodCategorySlugs = ['ayam', 'daging', 'seafood'];
 
         // [category_slug, name, slug, description, base_price, is_featured, variants, is_food, image_url]
         $products = [
@@ -108,6 +113,29 @@ class ProductSeeder extends Seeder
                     'product_id' => $product->id,
                     'sort_order' => $index,
                 ]));
+            }
+
+            if ($isFood && in_array($catSlug, $foodCategorySlugs)) {
+                $product->modifierGroups()->attach($nasiGroup->id, [
+                    'is_required' => true, 'min_selection' => 1, 'max_selection' => 1, 'sort_order' => 1,
+                ]);
+                $product->modifierGroups()->attach($extraGroup->id, [
+                    'is_required' => false, 'min_selection' => 0, 'max_selection' => null, 'sort_order' => 2,
+                ]);
+
+                foreach ($sambalIds as $i => $sambalId) {
+                    $sambalName = \App\Models\Sambal::where('id', $sambalId)->value('name');
+
+                    $sambalPrice = match(true) {
+                        str_contains($sambalName, 'Matah') => 2000,
+                        str_contains($sambalName, 'Dabu') => 2000,
+                        default => 0,
+                    };
+
+                    $product->sambals()->attach($sambalId, [
+                        'price' => $sambalPrice, 'is_required' => $sambalPrice === 0, 'sort_order' => $i,
+                    ]);
+                }
             }
         }
     }

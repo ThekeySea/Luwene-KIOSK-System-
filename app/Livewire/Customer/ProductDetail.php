@@ -174,7 +174,7 @@ class ProductDetail extends Component
             $modifiers[] = ['id' => $nasiModifier->id, 'name' => $nasiModifier->name, 'price' => (float) $nasiModifier->price, 'type' => 'NASI'];
         }
         if ($sambal) {
-            $modifiers[] = ['id' => $sambal->id, 'name' => $sambal->name, 'price' => (float) $sambal->price, 'type' => 'SAMBAL'];
+            $modifiers[] = ['id' => $sambal->id, 'name' => $sambal->name, 'price' => (float) $sambal->pivot->price, 'type' => 'SAMBAL'];
         }
         if ($spiceLevel) {
             $modifiers[] = ['id' => $spiceLevel->id, 'name' => $spiceLevel->name, 'price' => 0, 'type' => 'SPICE_LEVEL'];

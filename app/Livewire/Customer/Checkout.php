@@ -10,6 +10,7 @@ use App\Models\Payment;
 use App\Models\RestaurantTable;
 use App\Models\Setting;
 use App\Services\CartPricing;
+use App\Services\MidtransService;
 use Illuminate\Support\Str;
 use Livewire\Component;
 
@@ -18,6 +19,17 @@ class Checkout extends Component
     public string $paymentMethod = 'CASH';
     public string $notes = '';
     public bool $isSubmitting = false;
+
+    // QRIS overlay data
+    public bool $showQRIS = false;
+    public ?string $qrString = null;
+    public ?string $qrOrderId = null;
+    public ?string $qrOrderNumber = null;
+    public ?string $qrCustomerName = null;
+    public ?string $qrOrderTime = null;
+    public ?string $qrOrderMode = null;
+    public ?float $qrTotal = null;
+    public ?array $qrItems = null;
 
     protected array $rules = [
         'paymentMethod' => 'required|in:CASH,QRIS',
@@ -79,6 +91,8 @@ class Checkout extends Component
             $next = $maxNumber ? (int) substr($maxNumber, strlen($prefix) + 1) + 1 : 1;
             $orderNumber = $prefix . '-' . str_pad($next, 5, '0', STR_PAD_LEFT);
 
+            $isQRIS = $this->paymentMethod === 'QRIS';
+
             $order = Order::create([
                 'branch_id' => $branchId,
                 'user_id' => auth()->id(),
@@ -91,7 +105,7 @@ class Checkout extends Component
                 'order_number' => $orderNumber,
                 'order_mode' => $orderMode,
                 'status' => 'PENDING',
-                'payment_status' => 'UNPAID',
+                'payment_status' => $isQRIS ? 'UNPAID' : 'PAID',
                 'subtotal' => $this->subtotal,
                 'tax_amount' => $this->tax,
                 'discount_amount' => $this->discount,
@@ -114,8 +128,6 @@ class Checkout extends Component
                 foreach ($item['modifiers'] as $mod) {
                     OrderItemModifier::create([
                         'order_item_id' => $orderItem->id,
-                        // SAMBAL & SPICE_LEVEL hidup di tabel sendiri, simpan sebagai snapshot (FK null).
-                        // Hanya EXTRA & NASI yang merujuk baris asli tabel modifiers.
                         'modifier_id' => in_array($mod['type'] ?? '', ['EXTRA', 'NASI'], true) ? $mod['id'] : null,
                         'modifier_name' => $mod['name'],
                         'modifier_type' => $mod['type'],
@@ -124,24 +136,80 @@ class Checkout extends Component
                 }
             }
 
-            Payment::create([
-                'order_id' => $order->id,
-                'method' => $this->paymentMethod,
-                'amount' => $this->total,
-                'status' => 'PAID',
-                'paid_at' => now(),
-            ]);
+            if ($isQRIS) {
+                Payment::create([
+                    'order_id' => $order->id,
+                    'method' => 'QRIS',
+                    'amount' => $this->total,
+                    'status' => 'UNPAID',
+                ]);
 
-            $order->update(['payment_status' => 'PAID']);
+                $qrString = null;
 
-            if ($promo = CartPricing::promo()) {
-                $promo->increment('used_count');
+                try {
+                    $midtransService = new MidtransService();
+                    $chargeResult = $midtransService->chargeQRIS($order);
+
+                    $qrString = $chargeResult['actions'][0]['url']
+                        ?? $chargeResult['qr_string']
+                        ?? $chargeResult['deeplink']
+                        ?? null;
+                } catch (\Exception $e) {
+                    \Illuminate\Support\Facades\Log::warning('Midtrans QRIS charge failed, using fallback QR', [
+                        'order_number' => $orderNumber,
+                        'error' => $e->getMessage(),
+                    ]);
+                }
+
+                if (! $qrString) {
+                    $qrString = 'MIDTRANS|' . $orderNumber . '|' . number_format($this->total, 0, ',', '.') . '|PAY';
+                }
+
+                $this->qrString = $qrString;
+                $this->qrOrderId = $order->id;
+                $this->qrOrderNumber = $orderNumber;
+                $this->qrCustomerName = session('customer_name');
+                $this->qrOrderTime = now()->format('d M Y, H:i');
+                $this->qrOrderMode = $orderMode;
+                $this->qrTotal = $this->total;
+                $this->qrItems = collect($this->items)->map(fn($i) => [
+                    'product_name' => $i['product_name'],
+                    'quantity' => $i['quantity'],
+                ])->toArray();
+
+                $this->dispatch('show-qris',
+                    qrString: $qrString,
+                    orderId: $order->id,
+                    orderNumber: $orderNumber,
+                    customerName: session('customer_name'),
+                    orderTime: now()->format('d M Y, H:i'),
+                    orderMode: $orderMode,
+                    items: $this->qrItems,
+                    total: $this->total,
+                    bypassUrl: route('payment.bypass', $order->id),
+                    timeoutUrl: route('payment.timeout', $order->id),
+                    statusUrl: route('payment.midtrans.status', $orderNumber),
+                    successUrl: route('customer.order-success', $order->id),
+                );
+
+            } else {
+                Payment::create([
+                    'order_id' => $order->id,
+                    'method' => 'CASH',
+                    'amount' => $this->total,
+                    'status' => 'PAID',
+                    'paid_at' => now(),
+                ]);
+
+                if ($promo = CartPricing::promo()) {
+                    $promo->increment('used_count');
+                }
+
+                session()->forget('cart');
+                session()->forget('promo_code');
+
+                return redirect()->route('customer.order-success', $order->id);
             }
-
-            session()->forget('cart');
-            session()->forget('promo_code');
-
-            return redirect()->route('customer.order-success', $order->id);
         } catch (\Exception $e) {
             session()->flash('error', 'Gagal membuat pesanan: ' . $e->getMessage());
         } finally {

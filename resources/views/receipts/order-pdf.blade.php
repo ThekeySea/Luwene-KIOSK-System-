@@ -14,7 +14,7 @@
         .barcode { text-align: center; margin: 8px 0 2px; }
         .barcode img { width: 62mm; }
         .qr { text-align: center; margin: 6px 0 2px; }
-        .qr img { width: 20mm; }
+        .qr svg { width: 20mm; }
         .codetext { text-align: center; letter-spacing: 4px; font-weight: bold; font-size: 13px; margin-bottom: 4px; }
         .delivery-box { background: #f5f5f5; padding: 4px 6px; border-radius: 3px; margin: 4px 0; }
     </style>
@@ -99,7 +99,7 @@
     <div class="codetext">{{ $order->order_number }}</div>
     @if(! empty($qrCode))
     <div class="qr">
-        <img src="data:image/png;base64,{{ $qrCode }}" alt="QR Tracking">
+        {!! $qrCode !!}
     </div>
     <div class="c" style="font-size:9px;">Scan untuk lacak pesanan</div>
     @endif

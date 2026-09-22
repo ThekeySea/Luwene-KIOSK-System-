@@ -13,7 +13,8 @@
         "laravel/tinker": "^3.0",
         "laravel/ui": "^4.6",
         "livewire/livewire": "*",
-        "milon/barcode": "^13.5"
+        "milon/barcode": "^13.5",
+        "simplesoftwareio/simple-qrcode": "^4.2"
     },
     "require-dev": {
         "doctrine/dbal": "^4.4",

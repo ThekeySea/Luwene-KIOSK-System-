@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'LUWENE')</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
@@ -18,8 +19,10 @@
             $isPromo = request()->routeIs('customer.promo');
             $isFaq = request()->routeIs('customer.faq');
         @endphp
-        <div class="h-28" aria-hidden="true"></div>
-        <nav class="fixed bottom-0 left-0 right-0 z-30 px-4" style="padding-bottom: calc(env(safe-area-inset-bottom) + 0.75rem);">
+
+        {{-- Mobile: Bottom Nav --}}
+        <div class="h-28 md:hidden" aria-hidden="true"></div>
+        <nav class="fixed bottom-0 left-0 right-0 z-30 px-4 md:hidden" style="padding-bottom: calc(env(safe-area-inset-bottom) + 0.75rem);">
             <div class="max-w-lg mx-auto bg-white rounded-full border border-warm-100 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] px-2 py-2" style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); align-items: center;">
                 <a href="{{ route('home') }}" class="flex flex-col items-center gap-0.5 py-1 transition {{ $isHome ? 'text-primary' : 'text-warm-400 hover:text-warm-600' }}">
                     <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -56,6 +59,26 @@
                     </svg>
                     <span class="text-xs {{ $isFaq ? 'font-bold' : 'font-medium' }}">FAQ</span>
                 </a>
+            </div>
+        </nav>
+
+        {{-- Desktop: Top Nav --}}
+        <nav class="hidden md:block fixed top-0 left-0 right-0 z-30 bg-white border-b border-warm-100 shadow-sm">
+            <div class="max-w-5xl mx-auto px-6 py-3 flex items-center justify-between">
+                <div class="flex items-center gap-8">
+                    <a href="{{ route('home') }}" class="flex items-center gap-2">
+                        <span class="text-xl">🍗</span>
+                        <span class="text-lg font-display font-bold text-primary">LUWENE</span>
+                    </a>
+                    <div class="flex items-center gap-1">
+                        <a href="{{ route('home') }}" class="px-4 py-2 text-sm font-medium rounded-lg transition {{ $isHome ? 'bg-primary/10 text-primary font-bold' : 'text-warm-500 hover:bg-warm-100' }}">Beranda</a>
+                        <a href="{{ route('customer.menu') }}" class="px-4 py-2 text-sm font-medium rounded-lg transition {{ $isMenu ? 'bg-primary/10 text-primary font-bold' : 'text-warm-500 hover:bg-warm-100' }}">Menu</a>
+                        <a href="{{ route('customer.cart') }}" class="px-4 py-2 text-sm font-medium rounded-lg transition {{ $isCart ? 'bg-primary/10 text-primary font-bold' : 'text-warm-500 hover:bg-warm-100' }}">Nampan @if($navCartCount > 0)<span class="ml-1 px-1.5 py-0.5 bg-primary text-white text-[10px] font-bold rounded-full">{{ $navCartCount }}</span>@endif</a>
+                        <a href="{{ route('customer.promo') }}" class="px-4 py-2 text-sm font-medium rounded-lg transition {{ $isPromo ? 'bg-primary/10 text-primary font-bold' : 'text-warm-500 hover:bg-warm-100' }}">Promo</a>
+                        <a href="{{ route('customer.faq') }}" class="px-4 py-2 text-sm font-medium rounded-lg transition {{ $isFaq ? 'bg-primary/10 text-primary font-bold' : 'text-warm-500 hover:bg-warm-100' }}">FAQ</a>
+                    </div>
+                </div>
+                </div>
             </div>
         </nav>
     @endif

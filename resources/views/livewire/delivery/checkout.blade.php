@@ -139,4 +139,75 @@
             </button>
         </div>
     </div>
+
+    {{-- Confirm Modal --}}
+    @if($showConfirmModal)
+        <div class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" wire:click.self="$set('showConfirmModal', false)">
+            <div class="bg-white rounded-2xl p-6 w-full max-w-sm shadow-xl" x-data x-init="$nextTick(() => $el.classList.add('scale-in'))">
+                <div class="text-center mb-5">
+                    <div class="w-14 h-14 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <svg class="w-7 h-7 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-bold text-dark">Konfirmasi Pesanan</h3>
+                    <p class="text-sm text-warm-500 mt-1">Pastikan data pesanan sudah benar sebelum melanjutkan.</p>
+                </div>
+
+                <div class="bg-warm-50 rounded-xl p-3 mb-4 text-sm space-y-1">
+                    <div class="flex justify-between">
+                        <span class="text-warm-500">Total</span>
+                        <span class="font-bold text-dark">Rp {{ number_format($total, 0, ',', '.') }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-warm-500">Pembayaran</span>
+                        <span class="font-medium text-dark">{{ $paymentMethod === 'COD' ? 'Bayar di Tempat' : 'QRIS' }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-warm-500">Item</span>
+                        <span class="font-medium text-dark">{{ count($items) }} produk</span>
+                    </div>
+                </div>
+
+                <div class="flex gap-2">
+                    <button wire:click="$set('showConfirmModal', false)" class="flex-1 py-2.5 border border-warm-200 text-warm-600 text-sm font-semibold rounded-xl hover:bg-warm-50 transition">Batal</button>
+                    <button wire:click="confirmOrder" wire:loading.attr="disabled" class="flex-1 py-2.5 bg-primary text-white text-sm font-bold rounded-xl hover:bg-red-800 transition disabled:opacity-50">
+                        <span wire:loading.remove wire:target="confirmOrder">Ya, Pesan</span>
+                        <span wire:loading wire:target="confirmOrder">Memproses...</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    @endif
+
+    {{-- Success Animation --}}
+    @if($showSuccess)
+        <div class="fixed inset-0 bg-white z-[100] flex items-center justify-center" x-data="{ shown: false }" x-init="setTimeout(() => shown = true, 50); setTimeout(() => $wire.goToTrack(), 2500)">
+            <div class="text-center px-6" x-show="shown" x-transition:enter="transition ease-out duration-500" x-transition:enter-start="opacity-0 scale-90" x-transition:enter-end="opacity-100 scale-100">
+                <div class="success-checkmark mb-6">
+                    <div class="checkmark-circle">
+                        <svg class="checkmark" viewBox="0 0 52 52">
+                            <circle class="checkmark-circle-bg" cx="26" cy="26" r="25" fill="none"/>
+                            <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+                        </svg>
+                    </div>
+                </div>
+                <h2 class="text-2xl font-bold text-dark mb-2">Pesanan Berhasil!</h2>
+                <p class="text-warm-500 text-sm mb-1">Nomor pesanan kamu:</p>
+                <p class="text-xl font-bold text-primary mb-6">{{ $successOrderNumber }}</p>
+                <p class="text-xs text-warm-400 mb-8">Kamu akan diarahkan ke halaman pelacakan pesanan...</p>
+            </div>
+            <style>
+                .success-checkmark { width: 80px; height: 80px; margin: 0 auto; }
+                .checkmark-circle { width: 80px; height: 80px; position: relative; }
+                .checkmark-circle-bg { stroke-dasharray: 166; stroke-dashoffset: 166; stroke-width: 2; stroke-miterlimit: 10; stroke: #22c55e; animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards; }
+                .checkmark { width: 80px; height: 80px; position: absolute; top: 0; left: 0; }
+                .checkmark-check { stroke-dasharray: 48; stroke-dashoffset: 48; stroke-width: 2; stroke: #22c55e; animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.5s forwards; }
+                @keyframes stroke { 100% { stroke-dashoffset: 0; } }
+            </style>
+        </div>
+    @endif
+
+    {{-- QRIS Overlay — always in DOM, triggered by Livewire event --}}
+    <x-qris-overlay />
 </div>

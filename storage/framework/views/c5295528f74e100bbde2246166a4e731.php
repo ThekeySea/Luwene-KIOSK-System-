@@ -95,29 +95,84 @@
 
             
             <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($orderMode === 'DINE_IN'): ?>
-                <div class="mt-5 bg-white rounded-2xl p-4 shadow-sm border border-warm-100">
-                    <button wire:click="$set('orderMode', '')" class="mb-3 text-warm-400 hover:text-dark transition flex items-center gap-1 text-xs">
+                <div class="mt-5 bg-white rounded-2xl p-5 shadow-sm border border-warm-100" x-data="{ filter: 'all' }">
+                    <button wire:click="$set('orderMode', '')" class="mb-4 text-warm-400 hover:text-dark transition flex items-center gap-1 text-xs">
                         <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
                         Kembali
                     </button>
-                    <h3 class="text-sm font-display font-bold text-dark mb-3">Pilih Meja</h3>
-                    <div class="grid grid-cols-4 sm:grid-cols-6 gap-2">
+
+                    <div class="flex items-center justify-between mb-4">
+                        <div>
+                            <h3 class="text-sm font-display font-bold text-dark">Pilih Meja</h3>
+                            <p class="text-[11px] text-warm-400 mt-0.5"><?php echo e($tables->where('status', 'AVAILABLE')->count()); ?> meja tersedia</p>
+                        </div>
+                        <div class="flex items-center gap-3 text-[10px]">
+                            <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-400"></span> Kosong</span>
+                            <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-red-400"></span> Terisi</span>
+                        </div>
+                    </div>
+
+                    
+                    <div class="flex gap-2 mb-4 overflow-x-auto scroll-x pb-1">
+                        <button @click="filter = 'all'" :class="filter === 'all' ? 'bg-[#8A0000] text-white' : 'bg-warm-100 text-warm-500 hover:bg-warm-200'" class="px-3 py-1.5 rounded-full text-[11px] font-semibold transition whitespace-nowrap">Semua</button>
+                        <button @click="filter = '2'" :class="filter === '2' ? 'bg-[#8A0000] text-white' : 'bg-warm-100 text-warm-500 hover:bg-warm-200'" class="px-3 py-1.5 rounded-full text-[11px] font-semibold transition whitespace-nowrap">2 Orang</button>
+                        <button @click="filter = '4'" :class="filter === '4' ? 'bg-[#8A0000] text-white' : 'bg-warm-100 text-warm-500 hover:bg-warm-200'" class="px-3 py-1.5 rounded-full text-[11px] font-semibold transition whitespace-nowrap">4 Orang</button>
+                        <button @click="filter = '6'" :class="filter === '6' ? 'bg-[#8A0000] text-white' : 'bg-warm-100 text-warm-500 hover:bg-warm-200'" class="px-3 py-1.5 rounded-full text-[11px] font-semibold transition whitespace-nowrap">6 Orang</button>
+                    </div>
+
+                    
+                    <div class="grid grid-cols-3 sm:grid-cols-4 gap-2.5">
                         <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::openLoop(); ?><?php endif; ?><?php $__currentLoopData = $tables; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $table): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::startLoopIteration(); ?><?php endif; ?>
+                            <?php
+                                $isAvailable = $table->status === 'AVAILABLE';
+                            ?>
                             <button
                                 wire:click="selectTable('<?php echo e($table->id); ?>')"
-                                <?php if($table->status !== 'AVAILABLE'): echo 'disabled'; endif; ?>
-                                class="aspect-square rounded-xl border-2 p-2 flex flex-col items-center justify-center transition text-sm
-                                    <?php if($table->status === 'AVAILABLE'): ?>
-                                        border-warm-200 bg-white hover:border-[#E8751A] hover:bg-[#E8751A]/5 cursor-pointer
+                                <?php if(!$isAvailable): ?> disabled <?php endif; ?>
+                                x-show="filter === 'all' || '<?php echo e($table->capacity); ?>' === filter"
+                                class="group relative rounded-2xl border-2 p-3 flex flex-col items-center justify-center transition-all duration-200
+                                    <?php if($isAvailable): ?>
+                                        border-emerald-200 bg-gradient-to-b from-emerald-50 to-white hover:border-[#E8751A] hover:shadow-md hover:from-[#E8751A]/5 cursor-pointer active:scale-95
                                     <?php else: ?>
-                                        border-warm-100 bg-warm-50 opacity-50 cursor-not-allowed
+                                        border-warm-100 bg-warm-50/50 opacity-40 cursor-not-allowed
                                     <?php endif; ?>">
-                                <span class="text-base font-bold <?php echo e($table->status === 'AVAILABLE' ? 'text-dark' : 'text-warm-300'); ?>"><?php echo e($table->table_number); ?></span>
-                                <span class="text-[10px] <?php echo e($table->status === 'AVAILABLE' ? 'text-warm-400' : 'text-warm-300'); ?>"><?php echo e($table->capacity); ?>pk</span>
-                                <span class="mt-0.5 w-1.5 h-1.5 rounded-full <?php echo e($table->status === 'AVAILABLE' ? 'bg-green-400' : 'bg-red-400'); ?>"></span>
+
+                                
+                                <span class="absolute top-2 right-2 w-2 h-2 rounded-full <?php echo e($isAvailable ? 'bg-emerald-400' : 'bg-red-400'); ?>"></span>
+
+                                
+                                <div class="w-10 h-10 rounded-full flex items-center justify-center mb-2 transition
+                                    <?php if($isAvailable): ?> bg-emerald-100 text-emerald-600 group-hover:bg-[#E8751A]/10 group-hover:text-[#E8751A] <?php else: ?> bg-warm-100 text-warm-300 <?php endif; ?>">
+                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 7.5l16.5-4.5m0 0L21 11.25m-3.75-3.75v13.5m0 0L9 21m11.25-3.75L9 21" />
+                                    </svg>
+                                </div>
+
+                                
+                                <span class="text-base font-display font-bold <?php echo e($isAvailable ? 'text-dark group-hover:text-[#E8751A]' : 'text-warm-300'); ?>"><?php echo e($table->table_number); ?></span>
+
+                                
+                                <div class="flex items-center gap-0.5 mt-1">
+                                    <svg class="w-3 h-3 <?php echo e($isAvailable ? 'text-warm-400' : 'text-warm-300'); ?>" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0" />
+                                    </svg>
+                                    <span class="text-[10px] font-medium <?php echo e($isAvailable ? 'text-warm-400' : 'text-warm-300'); ?>"><?php echo e($table->capacity); ?></span>
+                                </div>
                             </button>
                         <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::endLoop(); ?><?php endif; ?><?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::closeLoop(); ?><?php endif; ?>
                     </div>
+
+                    <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($tables->where('status', 'AVAILABLE')->isEmpty()): ?>
+                        <div class="py-8 text-center">
+                            <div class="w-12 h-12 bg-warm-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                                <svg class="w-6 h-6 text-warm-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 7.5l16.5-4.5m0 0L21 11.25m-3.75-3.75v13.5m0 0L9 21m11.25-3.75L9 21" />
+                                </svg>
+                            </div>
+                            <p class="text-sm font-semibold text-warm-400">Semua meja sedang terisi</p>
+                            <p class="text-[11px] text-warm-300 mt-1">Coba lagi beberapa saat</p>
+                        </div>
+                    <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
                 </div>
             <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
         </section>

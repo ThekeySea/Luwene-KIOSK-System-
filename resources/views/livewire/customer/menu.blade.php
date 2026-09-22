@@ -1,4 +1,4 @@
-<div class="min-h-dvh bg-warm-50 pb-8">
+<div class="min-h-dvh bg-warm-50 pb-8 md:pt-16">
     <header class="bg-white shadow-sm sticky top-0 z-10">
         <div class="max-w-7xl mx-auto px-4 py-3 flex items-center gap-3">
             <a href="{{ route('home') }}" class="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-warm-100 text-warm-500 hover:text-dark transition" aria-label="Kembali">

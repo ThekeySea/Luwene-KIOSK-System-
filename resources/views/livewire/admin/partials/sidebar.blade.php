@@ -14,7 +14,7 @@
                 ['route' => 'admin.products', 'label' => 'Produk'],
                 ['route' => 'admin.categories', 'label' => 'Kategori'],
                 ['route' => 'admin.promos', 'label' => 'Promo'],
-                ['route' => 'admin.branches', 'label' => 'Cabang'],
+                ['route' => 'admin.branches', 'label' => 'Info Restoran'],
                 ['route' => 'admin.staff', 'label' => 'Staff'],
                 ['route' => 'admin.transactions', 'label' => 'Transaksi'],
                 ['route' => 'admin.reports', 'label' => 'Laporan'],

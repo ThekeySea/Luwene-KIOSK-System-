@@ -168,7 +168,7 @@
                                             <input type="checkbox" wire:model="selectedSambals" value="{{ $sambal->id }}" class="w-4 h-4 accent-primary rounded">
                                             <span class="flex-1 text-gray-700">{{ $sambal->name }}</span>
                                             <span class="text-xs text-gray-400">{{ $sambal->spice_levels_count ?? $sambal->spiceLevels->count() }} level</span>
-                                            <span class="text-xs text-gray-400">Stok: {{ $sambal->price > 0 ? 'Rp '.number_format($sambal->price, 0, ',', '.') : 'Gratis' }}</span>
+                                             <span class="text-xs text-gray-400">{{ $sambal->price > 0 ? 'Rp '.number_format($sambal->price, 0, ',', '.') : 'Gratis' }}</span>
                                         </label>
                                         @if (in_array($sambal->id, $selectedSambals))
                                             <div class="mt-2 ml-6 flex items-center gap-2">

@@ -6,6 +6,7 @@
     <title>LUWENE Admin</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
+    <script src="{{ asset('vendor/chart.umd.min.js') }}" defer></script>
 </head>
 <body class="bg-gray-50 text-gray-900 antialiased font-sans">
     <x-loading-bar />
@@ -142,8 +143,10 @@
                 {!! $pageActions ?? '' !!}
             </header>
 
-            <main class="flex-1 p-6 lg:p-8">
-                {{ $slot }}
+            <main class="flex-1 p-4 md:p-6 lg:p-8">
+                <div class="max-w-7xl mx-auto">
+                    {{ $slot }}
+                </div>
             </main>
         </div>
     </div>

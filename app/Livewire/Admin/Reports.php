@@ -64,6 +64,59 @@ class Reports extends Component
             ->limit(5)
             ->get();
 
+        // Time-series revenue for bar chart
+        if ($this->preset === 'today') {
+            $revenueTimeSeries = (clone $paid)
+                ->select(DB::raw('HOUR(created_at) as hour'), DB::raw('sum(total_amount) as revenue'))
+                ->groupBy('hour')
+                ->orderBy('hour')
+                ->pluck('revenue', 'hour');
+
+            $labels = collect(range(0, 23))->map(fn ($h) => sprintf('%02d:00', $h));
+            $data = collect(range(0, 23))->map(fn ($h) => (float) ($revenueTimeSeries[$h] ?? 0));
+        } else {
+            $revenueTimeSeries = (clone $paid)
+                ->select(DB::raw('DATE(created_at) as date'), DB::raw('sum(total_amount) as revenue'))
+                ->groupBy('date')
+                ->orderBy('date')
+                ->pluck('revenue', 'date');
+
+            $labels = collect();
+            $data = collect();
+            $cursor = $from->copy()->startOfDay();
+            while ($cursor->lte($to)) {
+                $key = $cursor->format('Y-m-d');
+                $labels->push($cursor->format('d M'));
+                $data->push((float) ($revenueTimeSeries[$key] ?? 0));
+                $cursor->addDay();
+            }
+        }
+
+        $chartData = [
+            'revenueTimeSeries' => [
+                'labels' => $labels->values()->all(),
+                'data' => $data->values()->all(),
+            ],
+            'byStatus' => [
+                'labels' => $byStatus->keys()->all(),
+                'data' => $byStatus->values()->all(),
+            ],
+            'byMode' => [
+                'labels' => $byMode->keys()->map(fn ($m) => $m === 'DINE_IN' ? 'Dine In' : 'Bawa Pulang')->all(),
+                'data' => $byMode->values()->all(),
+            ],
+            'byPayment' => [
+                'labels' => $byPayment->pluck('method')->all(),
+                'data' => $byPayment->pluck('total')->all(),
+                'revenue' => $byPayment->pluck('revenue')->all(),
+            ],
+            'topProducts' => [
+                'labels' => $topProducts->pluck('product_name')->all(),
+                'qty' => $topProducts->pluck('qty')->all(),
+                'revenue' => $topProducts->pluck('revenue')->all(),
+            ],
+        ];
+
         $fromLabel = $from->format('d M Y');
         $toLabel = $to->format('d M Y');
 
@@ -76,6 +129,7 @@ class Reports extends Component
             'byMode' => $byMode,
             'byPayment' => $byPayment,
             'topProducts' => $topProducts,
+            'chartData' => $chartData,
             'fromLabel' => $fromLabel,
             'toLabel' => $toLabel,
         ])->layout('components.layouts.admin', [
