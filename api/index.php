@@ -3,10 +3,6 @@
 error_reporting(E_ALL);
 ini_set('display_errors', '0');
 
-$_ENV['APP_DEBUG'] = 'true';
-$_SERVER['APP_DEBUG'] = 'true';
-putenv('APP_DEBUG=true');
-
 foreach ($_ENV as $key => $value) {
     if ($value === '') {
         unset($_ENV[$key]);
