@@ -1,14 +1,16 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "buildCommand": "npm ci && npm run build",
-  "services": {
-    "app": {
-      "root": ".",
-      "entrypoint": "Dockerfile.vercel",
-      "runtime": "container"
+  "functions": {
+    "api/index.php": {
+      "runtime": "vercel-php@0.7.4",
+      "memory": 512,
+      "maxDuration": 30
     }
   },
-  "rewrites": [
-    { "source": "/((?!api/).*)", "destination": { "service": "app" } }
+  "routes": [
+    { "src": "/build/(.*)", "headers": { "cache-control": "public, max-age=31536000, immutable" } },
+    { "src": "/storage/(.*)", "headers": { "cache-control": "public, max-age=604800" } },
+    { "src": "/(.*)", "dest": "/api/index.php" }
   ]
 }
