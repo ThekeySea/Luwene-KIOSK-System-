@@ -144,6 +144,13 @@ class Checkout extends Component
                     'status' => 'UNPAID',
                 ]);
 
+                if ($promo = CartPricing::promo()) {
+                    $promo->increment('used_count');
+                }
+
+                session()->forget('cart');
+                session()->forget('promo_code');
+
                 $qrString = null;
 
                 try {

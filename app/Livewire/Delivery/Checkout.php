@@ -168,6 +168,8 @@ class Checkout extends Component
                 'status' => 'UNPAID',
             ]);
 
+            session()->forget('delivery_cart');
+
             $qrString = null;
 
             try {

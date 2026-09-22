@@ -65,7 +65,10 @@
                             @endif
                         </div>
                         <div class="p-3 flex flex-col flex-1">
-                            <h3 class="font-semibold text-dark text-xs leading-snug line-clamp-2 min-h-[2rem]">{{ $product->name }}</h3>
+                            <h3 class="font-semibold text-dark text-xs leading-snug line-clamp-2">{{ $product->name }}</h3>
+                            @if($product->description)
+                                <p class="text-[10px] text-warm-400 mt-0.5 line-clamp-1">{{ \Illuminate\Support\Str::words($product->description, 5, '...') }}</p>
+                            @endif
                             <div class="mt-auto pt-2">
                                 <p class="text-sm font-bold text-primary">Rp {{ number_format($product->base_price, 0, ',', '.') }}</p>
                             </div>

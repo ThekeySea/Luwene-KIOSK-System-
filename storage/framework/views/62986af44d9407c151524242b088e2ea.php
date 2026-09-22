@@ -45,6 +45,13 @@
             </a>
         </div>
     </div>
-    <iframe src="<?php echo e(route('customer.order-receipt', $order->id)); ?>" class="hidden" title="Unduh struk otomatis" aria-hidden="true"></iframe>
+    <script>
+        setTimeout(() => {
+            const a = document.createElement('a');
+            a.href = '<?php echo e(route("customer.order-receipt", $order->id)); ?>';
+            a.download = '';
+            a.click();
+        }, 500);
+    </script>
 </div>
 <?php /**PATH C:\laragon\www\Luwene\resources\views/livewire/customer/order-success.blade.php ENDPATH**/ ?>

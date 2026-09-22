@@ -45,5 +45,12 @@
             </a>
         </div>
     </div>
-    <iframe src="{{ route('customer.order-receipt', $order->id) }}" class="hidden" title="Unduh struk otomatis" aria-hidden="true"></iframe>
+    <script>
+        setTimeout(() => {
+            const a = document.createElement('a');
+            a.href = '{{ route("customer.order-receipt", $order->id) }}';
+            a.download = '';
+            a.click();
+        }, 500);
+    </script>
 </div>

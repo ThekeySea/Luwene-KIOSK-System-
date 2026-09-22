@@ -103,4 +103,16 @@
     html.kiosk {
         font-size: 20px;
     }
+    html.kiosk .product-detail-layout {
+        display: block !important;
+        max-width: 48rem;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    html.kiosk .product-detail-layout .desktop-only {
+        display: none !important;
+    }
+    html.kiosk .product-detail-layout .mobile-only {
+        display: block !important;
+    }
 }

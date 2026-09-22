@@ -30,20 +30,35 @@
             </div>
             <div class="divide-y divide-gray-100">
                 @forelse ($pendingOrders as $order)
-                    <div class="px-5 py-4">
+                    @php
+                        $isDelivery = $order->order_mode === 'DELIVERY';
+                        $borderColor = $isDelivery ? 'border-l-purple-500' : 'border-l-emerald-500';
+                        $badgeBg = $isDelivery ? 'bg-purple-100 text-purple-700' : 'bg-emerald-100 text-emerald-700';
+                        $badgeIcon = $isDelivery ? '🛵' : match($order->order_mode) {
+                            'DINE_IN' => '🍽️',
+                            'TAKEAWAY' => '📦',
+                            default => '🛒',
+                        };
+                        $badgeLabel = $isDelivery ? 'Delivery' : match($order->order_mode) {
+                            'DINE_IN' => 'Dine In',
+                            'TAKEAWAY' => 'Bawa Pulang',
+                            default => 'Kiosk',
+                        };
+                    @endphp
+                    <div class="px-5 py-4 border-l-4 {{ $borderColor }}">
                         <div class="flex items-center justify-between mb-2">
                             <div>
-                                <p class="text-sm font-bold text-gray-900">#{{ $order->order_number }} &middot; {{ $order->customer_name ?? 'Tanpa nama' }}</p>
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wide {{ $badgeBg }} px-2 py-0.5 rounded-full">
+                                        {{ $badgeIcon }} {{ $badgeLabel }}
+                                    </span>
+                                    <p class="text-sm font-bold text-gray-900">#{{ $order->order_number }} &middot; {{ $order->customer_name ?? 'Tanpa nama' }}</p>
+                                </div>
                                 <p class="text-xs text-gray-400">
                                     @if($order->order_mode === 'DINE_IN')
-                                        Dine In{{ $order->table ? ' · Meja '.$order->table->table_number : '' }}
-                                    @elseif($order->order_mode === 'DELIVERY')
-                                        🚗 Delivery
-                                        @if($order->driver_name)
-                                            · Driver: {{ $order->driver_name }}
-                                        @endif
-                                    @else
-                                        Bawa Pulang
+                                        Meja {{ $order->table->table_number ?? '-' }}
+                                    @elseif($order->order_mode === 'DELIVERY' && $order->driver_name)
+                                        Driver: {{ $order->driver_name }}
                                     @endif
                                     &middot; {{ $order->created_at->format('H:i') }}
                                 </p>

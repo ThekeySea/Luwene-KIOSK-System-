@@ -57,10 +57,13 @@
                                     <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
                                 </div>
                                 <div class="p-3 flex flex-col flex-1">
-                                    <h3 class="font-semibold text-dark text-sm leading-snug line-clamp-2 min-h-10"><?php echo e($product->name); ?></h3>
-                                    <div class="mt-auto pt-2 flex items-center justify-between gap-2">
-                                        <p class="text-sm font-bold text-primary">Rp <?php echo e(number_format($product->base_price, 0, ',', '.')); ?></p>
-                                        <span class="px-4 py-2 rounded-full bg-primary text-white text-xs font-bold hover:bg-primary-700 transition shrink-0">+ Tambah</span>
+                                    <h3 class="font-semibold text-dark text-sm leading-snug line-clamp-2"><?php echo e($product->name); ?></h3>
+                                    <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($product->description): ?>
+                                        <p class="text-[11px] text-warm-400 mt-0.5 line-clamp-1"><?php echo e(\Illuminate\Support\Str::words($product->description, 5, '...')); ?></p>
+                                    <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
+                                    <div class="mt-auto pt-2">
+                                        <p class="text-sm font-bold text-primary mb-2">Rp <?php echo e(number_format($product->base_price, 0, ',', '.')); ?></p>
+                                        <span class="block w-full text-center py-2 rounded-full bg-primary text-white text-xs font-bold hover:bg-primary-700 transition">+ Tambah</span>
                                     </div>
                                 </div>
                             </a>
@@ -71,10 +74,13 @@
                                 </div>
                                 <span class="absolute top-2 left-2 text-[10px] font-bold uppercase tracking-wide bg-warm-800 text-white px-2 py-0.5 rounded-full">Habis</span>
                                 <div class="p-3 flex flex-col flex-1">
-                                    <h3 class="font-semibold text-dark text-sm leading-snug line-clamp-2 min-h-10"><?php echo e($product->name); ?></h3>
-                                    <div class="mt-auto pt-2 flex items-center justify-between gap-2">
-                                        <p class="text-sm font-bold text-warm-400">Rp <?php echo e(number_format($product->base_price, 0, ',', '.')); ?></p>
-                                        <span class="px-4 py-2 rounded-full bg-warm-200 text-warm-400 text-xs font-bold shrink-0">Habis</span>
+                                    <h3 class="font-semibold text-dark text-sm leading-snug line-clamp-2"><?php echo e($product->name); ?></h3>
+                                    <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($product->description): ?>
+                                        <p class="text-[11px] text-warm-400 mt-0.5 line-clamp-1"><?php echo e(\Illuminate\Support\Str::words($product->description, 5, '...')); ?></p>
+                                    <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
+                                    <div class="mt-auto pt-2">
+                                        <p class="text-sm font-bold text-warm-400 mb-2">Rp <?php echo e(number_format($product->base_price, 0, ',', '.')); ?></p>
+                                        <span class="block w-full text-center py-2 rounded-full bg-warm-200 text-warm-400 text-xs font-bold">Habis</span>
                                     </div>
                                 </div>
                             </div>
